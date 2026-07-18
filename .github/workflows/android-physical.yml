@@ -29,7 +29,11 @@ jobs:
           cache: true
       - run: flutter pub get
       - name: Install Android 17 compile SDK
-        run: sdkmanager 'platforms;android-37' 'build-tools;37.0.0' >/dev/null
+        run: |
+          sdk_root="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          sdkmanager_bin="$sdk_root/cmdline-tools/latest/bin/sdkmanager"
+          test -x "$sdkmanager_bin"
+          "$sdkmanager_bin" 'platforms;android-37' 'build-tools;37.0.0' >/dev/null
       - run: flutter analyze
       - run: flutter test
       - run: flutter build apk --release
