@@ -40,6 +40,13 @@ jobs:
       max-parallel: 4
       matrix:
         api-level: [24, 26, 29, 31, 33, 34, 35, 36]
+        include:
+          - api-level: 35
+            target: default
+            ram_size: 4096M
+            heap_size: 512M
+            disk_size: 4096M
+            boot_timeout: 1800
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -50,9 +57,11 @@ jobs:
         with:
           api-level: ${{ matrix.api-level }}
           arch: x86_64
-          target: google_apis
+          target: ${{ matrix.target || 'google_apis' }}
           profile: Nexus 5X
-          disk-size: 2048M
-          heap-size: 256M
+          ram-size: ${{ matrix.ram_size || '2048M' }}
+          disk-size: ${{ matrix.disk_size || '2048M' }}
+          heap-size: ${{ matrix.heap_size || '256M' }}
+          emulator-boot-timeout: ${{ matrix.boot_timeout || 600 }}
           disable-animations: true
           script: bash .github/scripts/android-smoke.sh artifacts/app-release.apk
