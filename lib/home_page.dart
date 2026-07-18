@@ -631,9 +631,7 @@ class _SetupPageState extends State<SetupPage> {
     builder: (context) => AlertDialog(
       icon: const Icon(Icons.router_rounded, color: _gold, size: 34),
       title: Text(result.model),
-      content: Text(
-        '${result.message}\n\nNo unverified commands were sent to this router.',
-      ),
+      content: Text('${result.message}\n\n${_routerFailureGuidance(result)}'),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
@@ -642,6 +640,11 @@ class _SetupPageState extends State<SetupPage> {
       ],
     ),
   );
+
+  String _routerFailureGuidance(RouterResult result) =>
+      result.workflow == 'dns_verification_failed'
+      ? 'A DNS save was attempted through the verified page contract, but read-back did not confirm the saved values. Do not assume router protection is active. The firewall step was not started; check the router’s WAN DNS page before trying again.'
+      : 'No unverified commands were sent to this router.';
 
   Future<void> _showSuccess({
     required bool routerOk,

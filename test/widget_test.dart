@@ -44,12 +44,19 @@ void main() {
   late List<String> nativeCalls;
   late List<MethodCall> platformCalls;
   late bool localNetworkAllowed;
+  late Map<String, Object?> routerResponse;
 
   setUp(() {
     GuardPlatform.debugAndroidOverride = true;
     nativeCalls = <String>[];
     platformCalls = <MethodCall>[];
     localNetworkAllowed = true;
+    routerResponse = <String, Object?>{
+      'ok': true,
+      'model': 'Huawei DN8245V-56 (test fixture)',
+      'message': 'DNS and bypass rules verified.',
+      'workflow': 'huawei_dn8245v56',
+    };
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
           nativeCalls.add(call.method);
@@ -66,12 +73,7 @@ void main() {
               'workflow': 'huawei_dn8245v56',
               'automaticEligible': true,
             },
-            'configureRouter' => <String, Object?>{
-              'ok': true,
-              'model': 'Huawei DN8245V-56 (test fixture)',
-              'message': 'DNS and bypass rules verified.',
-              'workflow': 'huawei_dn8245v56',
-            },
+            'configureRouter' => routerResponse,
             'prepareVpn' || 'startVpn' => true,
             'openVpnSettings' => null,
             _ => throw PlatformException(code: 'unexpected_method'),
@@ -204,6 +206,55 @@ void main() {
       nativeCalls,
       containsAllInOrder(<String>['prepareLocalNetwork', 'configureRouter']),
     );
+    expect(nativeCalls, isNot(contains('prepareVpn')));
+  });
+
+  testWidgets('explains an unconfirmed DNS write without claiming protection', (
+    WidgetTester tester,
+  ) async {
+    routerResponse = <String, Object?>{
+      'ok': false,
+      'model': 'Huawei DN8245V-56 (field fixture)',
+      'message': 'The router did not confirm the DNS policy.',
+      'workflow': 'dns_verification_failed',
+    };
+    await tester.pumpWidget(const ArabsGuardApp());
+    await tester.pump();
+    await tester.tap(find.text('Set up protection'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('guard-mode-router')));
+    await tester.pumpAndSettle();
+
+    final username = find.byKey(const Key('router-username-field'));
+    await tester.scrollUntilVisible(
+      username,
+      220,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.enterText(username, 'fixture-admin');
+    final password = find.byKey(const Key('router-password-field'));
+    await tester.scrollUntilVisible(
+      password,
+      180,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.enterText(password, 'fixture-password');
+    tester.testTextInput.hide();
+    await _tapCheckbox(tester, const Key('router-consent'));
+    await _tapVisible(tester, find.byKey(const Key('apply-protection')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(find.textContaining('A DNS save was attempted'), findsOneWidget);
+    expect(
+      find.textContaining('Do not assume router protection'),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('firewall step was not started'),
+      findsOneWidget,
+    );
+    expect(find.text('Protection enabled'), findsNothing);
     expect(nativeCalls, isNot(contains('prepareVpn')));
   });
 

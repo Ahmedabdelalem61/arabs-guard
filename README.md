@@ -80,7 +80,7 @@ Future structured local data is intentionally the last priority. The privacy and
 
 Local demo APKs use the Flutter template's debug signing key. Before Play publishing, create and protect a production upload keystore, configure release signing outside Git, build an Android App Bundle, complete the Google Play `VpnService` declaration, and provide the required VPN review video and prominent-disclosure evidence.
 
-The current Android 17 evaluation build is published as the [v1.0.0-alpha.7 prerelease](https://github.com/Ahmedabdelalem61/arabs-guard/releases/tag/v1.0.0-alpha.7).
+The current Android 17 evaluation build is published as the [v1.0.0-alpha.8 prerelease](https://github.com/Ahmedabdelalem61/arabs-guard/releases/tag/v1.0.0-alpha.8).
 
 ## Support
 
