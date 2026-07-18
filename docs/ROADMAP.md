@@ -5,8 +5,9 @@ This list is ordered by release risk. A lower priority must not displace an unfi
 ## P0 — Android compatibility gate (mandatory)
 
 - [x] Support the Flutter SDK floor, Android 7.0/API 24.
-- [x] Run the release APK on every API from 24 through Android 17/API 37 using GitHub-hosted x86_64 emulators: lightweight AOSP images for 24–36 and Android 17's currently available Google APIs 16 KB-page image for 37.
-- [x] On every API, verify the exact runtime API, install the release and instrumentation APKs, launch/resume `MainActivity`, and run the native component/permission/VPN contract suite.
+- [x] Run the release APK on every stable API from 24 through 36 using GitHub-hosted AOSP x86_64 emulators.
+- [x] On APIs 24–36, verify the exact runtime API, install the release and instrumentation APKs, launch/resume `MainActivity`, and run the native component/permission/VPN contract suite.
+- [ ] Run the same contract suite on API 37 when an accelerated hosted image becomes available, or on a physical Android 17 device; keep the current manual preview gate fail-fast.
 - [x] Run Flutter tests for router-only, device-only, router+device validation, gateway auto-detection, catalog navigation, and the Arabic-region roadmap.
 - [x] Keep KVM acceleration, explicit ADB timeouts/recovery, per-job ceilings, and uploaded per-API diagnostics so no runner can hang indefinitely.
 - [ ] Before changing `targetSdk` to 37, add and test Android 17's prominent `ACCESS_LOCAL_NETWORK` runtime-permission flow, including denial and revocation. Do not request it while targeting SDK 36.

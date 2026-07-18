@@ -19,7 +19,7 @@ on:
   workflow_dispatch:
     inputs:
       api:
-        description: Android API to test, or all for the complete matrix
+        description: Android API to test (all runs the stable API 24-36 matrix; API 37 is preview-only)
         required: true
         default: all
         type: choice
@@ -88,7 +88,7 @@ jobs:
       fail-fast: false
       max-parallel: 4
       matrix:
-        api: ${{ fromJSON(github.event_name == 'workflow_dispatch' && inputs.api != 'all' && format('[{0}]', inputs.api) || '[24,25,26,27,28,29,30,31,32,33,34,35,36,37]') }}
+        api: ${{ fromJSON(github.event_name == 'workflow_dispatch' && inputs.api != 'all' && format('[{0}]', inputs.api) || '[24,25,26,27,28,29,30,31,32,33,34,35,36]') }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
