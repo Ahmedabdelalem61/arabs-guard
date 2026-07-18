@@ -4,6 +4,8 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.VpnService
 import android.os.Build
 import android.provider.Settings
@@ -11,6 +13,7 @@ import androidx.core.content.ContextCompat
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import java.net.Inet4Address
 
 class MainActivity : FlutterActivity() {
     private var pendingVpnResult: MethodChannel.Result? = null
@@ -26,6 +29,7 @@ class MainActivity : FlutterActivity() {
                 "prepareVpn" -> prepareVpn(result)
                 "startVpn" -> startVpn(result)
                 "vpnStatus" -> result.success(GuardVpnService.isRunning)
+                "detectRouterGateway" -> detectRouterGateway(result)
                 "openVpnSettings" -> {
                     startActivity(Intent(Settings.ACTION_VPN_SETTINGS))
                     result.success(null)
@@ -67,6 +71,26 @@ class MainActivity : FlutterActivity() {
         }
         pendingVpnResult = result
         startActivityForResult(intent, REQUEST_VPN)
+    }
+
+    private fun detectRouterGateway(result: MethodChannel.Result) {
+        val connectivity = getSystemService(ConnectivityManager::class.java)
+        val network = connectivity.activeNetwork
+        val capabilities = network?.let(connectivity::getNetworkCapabilities)
+        val onLocalNetwork = capabilities?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true ||
+            capabilities?.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) == true
+        if (!onLocalNetwork) {
+            result.success(null)
+            return
+        }
+        val gateway = connectivity.getLinkProperties(network)
+            ?.routes
+            ?.firstOrNull { route ->
+                route.isDefaultRoute && route.gateway is Inet4Address
+            }
+            ?.gateway
+            ?.hostAddress
+        result.success(gateway)
     }
 
     private fun startVpn(result: MethodChannel.Result) {

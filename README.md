@@ -5,6 +5,7 @@ Arabs Guard is a consent-driven Android app for family-safe DNS protection on a 
 ## What works in this release
 
 - Three modes: router, this Android phone, or both.
+- Auto-detection of the current Wi-Fi/Ethernet gateway, followed by model and firmware fingerprinting before router changes.
 - Android DNS-only `VpnService` with prominent disclosure and the Android system consent dialog.
 - DNS queries are forwarded over DNS-over-HTTPS to the CleanBrowsing Family Filter.
 - Huawei DN8245V-56 firmware adapter for WAN DNS plus an outbound TCP/UDP 53 and 853 bypass rule.

@@ -10,4 +10,14 @@ void main() {
     expect(find.text('Set up protection'), findsOneWidget);
     expect(find.text('A calmer internet starts here'), findsOneWidget);
   });
+
+  testWidgets('offers permission-light router auto detection', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const ArabsGuardApp());
+    await tester.tap(find.text('Set up protection'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Auto-detect Wi-Fi router'), findsOneWidget);
+  });
 }

@@ -41,6 +41,11 @@ class GuardPlatform {
     return await _channel.invokeMethod<bool>('vpnStatus') ?? false;
   }
 
+  static Future<String?> detectRouterGateway() async {
+    if (!Platform.isAndroid) return null;
+    return _channel.invokeMethod<String>('detectRouterGateway');
+  }
+
   static Future<void> openVpnSettings() async {
     if (Platform.isAndroid) {
       await _channel.invokeMethod<void>('openVpnSettings');

@@ -339,7 +339,9 @@ class _SetupPageState extends State<SetupPage> {
   bool _routerConsent = false;
   bool _vpnConsent = false;
   bool _busy = false;
+  bool _detectingRouter = false;
   String _progress = '';
+  String _routerDetectionHint = '';
 
   bool get _usesRouter => _mode != GuardMode.device;
   bool get _usesDevice => _mode != GuardMode.router;
@@ -351,6 +353,42 @@ class _SetupPageState extends State<SetupPage> {
     _password.clear();
     _password.dispose();
     super.dispose();
+  }
+
+  Future<void> _detectRouter() async {
+    setState(() {
+      _detectingRouter = true;
+      _routerDetectionHint = '';
+    });
+    try {
+      final gateway = _demoMode
+          ? '192.168.1.1'
+          : await GuardPlatform.detectRouterGateway();
+      if (!mounted) return;
+      if (gateway == null || gateway.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Connect to the router Wi-Fi and try detection again.',
+            ),
+          ),
+        );
+        return;
+      }
+      _address.text = gateway;
+      setState(() {
+        _routerDetectionHint =
+            'Router found at $gateway. Its model and firmware will be fingerprinted before changes.';
+      });
+    } on PlatformException {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Router detection was not available.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _detectingRouter = false);
+    }
   }
 
   Future<void> _apply() async {
@@ -567,6 +605,31 @@ class _SetupPageState extends State<SetupPage> {
                   ? 'Enter the router address.'
                   : null,
             ),
+            const SizedBox(height: 8),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: OutlinedButton.icon(
+                onPressed: _busy || _detectingRouter ? null : _detectRouter,
+                icon: _detectingRouter
+                    ? const SizedBox.square(
+                        dimension: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.wifi_find_rounded),
+                label: const Text('Auto-detect Wi-Fi router'),
+              ),
+            ),
+            if (_routerDetectionHint.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(
+                _routerDetectionHint,
+                style: const TextStyle(
+                  color: _teal,
+                  fontSize: 12,
+                  height: 1.35,
+                ),
+              ),
+            ],
             const SizedBox(height: 12),
             TextFormField(
               controller: _username,
