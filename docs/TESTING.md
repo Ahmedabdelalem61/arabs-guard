@@ -18,7 +18,7 @@ Arabs Guard treats compatibility as a release gate, not a sample-device claim. T
 
 Pure JVM tests cover every native router-fingerprint family, specific-before-generic matching, and fail-closed handling for unknown firmware.
 
-Before any emulator starts, a package gate verifies both APK archives, Flutter application libraries for `armeabi-v7a`, `arm64-v8a`, and `x86_64`, and the instrumentation runner's tracing, lifecycle, registry, and contract-test classes. A stripped or incomplete test runtime therefore fails once in the build job instead of wasting the entire emulator matrix.
+Before any emulator starts, a package gate verifies both APK archives, Flutter application libraries for `armeabi-v7a`, `arm64-v8a`, and `x86_64`, and actual DEX class definitions for the instrumentation runner, tracing runtime, lifecycle, registry, and contract tests. It does not accept a mere class-reference string. A stripped or incomplete runtime therefore fails once in the build job instead of wasting the entire emulator matrix.
 
 ## Every-API device layer
 

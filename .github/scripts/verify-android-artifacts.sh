@@ -4,6 +4,7 @@ set -Eeuo pipefail
 readonly app_apk="${1:-build/app/outputs/flutter-apk/app-release.apk}"
 readonly test_apk="${2:-build/app/outputs/apk/androidTest/release/app-release-androidTest.apk}"
 readonly scratch_dir="$(mktemp -d)"
+readonly sdk_root="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
 
 cleanup() {
   rm -rf -- "$scratch_dir"
@@ -18,6 +19,19 @@ for artifact in "$app_apk" "$test_apk"; do
   unzip -tqq "$artifact"
 done
 
+if [[ -z "$sdk_root" ]]; then
+  echo "ANDROID_SDK_ROOT or ANDROID_HOME is required for DEX verification." >&2
+  exit 1
+fi
+readonly dexdump_bin="$(
+  find "$sdk_root/build-tools" -mindepth 2 -maxdepth 2 -type f -name dexdump \
+    -print | sort -V | tail -1
+)"
+if [[ ! -x "$dexdump_bin" ]]; then
+  echo "Android SDK dexdump was not found." >&2
+  exit 1
+fi
+
 unzip -Z1 "$app_apk" > "$scratch_dir/app-entries.txt"
 for abi in armeabi-v7a arm64-v8a x86_64; do
   grep -Fxq "lib/$abi/libapp.so" "$scratch_dir/app-entries.txt" || {
@@ -26,16 +40,34 @@ for abi in armeabi-v7a arm64-v8a x86_64; do
   }
 done
 
-unzip -p "$test_apk" 'classes*.dex' | strings \
-  > "$scratch_dir/test-dex-strings.txt"
-for required_symbol in \
-  'androidx/test/runner/AndroidJUnitRunner' \
-  'androidx/tracing/Trace' \
-  'ActivityScenario' \
-  'InstrumentationRegistry' \
-  'PlatformContractTest'; do
-  grep -Fq "$required_symbol" "$scratch_dir/test-dex-strings.txt" || {
-    echo "Instrumentation APK is missing required runtime symbol: $required_symbol" >&2
+for artifact in "$app_apk" "$test_apk"; do
+  while IFS= read -r dex_entry; do
+    dex_file="$scratch_dir/$(basename "$artifact")-$dex_entry"
+    unzip -p "$artifact" "$dex_entry" > "$dex_file"
+    "$dexdump_bin" "$dex_file" >> "$scratch_dir/dex-definitions.txt"
+  done < <(unzip -Z1 "$artifact" | grep -E '^classes([0-9]+)?\.dex$')
+done
+
+for required_class in \
+  'Landroidx/test/runner/AndroidJUnitRunner;' \
+  'Landroidx/test/runner/MonitoringInstrumentation;' \
+  'Landroidx/tracing/Trace;' \
+  'Landroidx/tracing/TraceApi18Impl;' \
+  'Landroidx/tracing/TraceApi29Impl;' \
+  'Landroidx/lifecycle/Lifecycle;' \
+  'Landroidx/lifecycle/Lifecycle$State;' \
+  'Landroidx/test/core/app/ActivityScenario;' \
+  'Landroidx/test/platform/app/InstrumentationRegistry;' \
+  'Landroidx/test/ext/junit/runners/AndroidJUnit4;' \
+  'Lkotlin/io/CloseableKt;' \
+  'Lkotlin/collections/ArraysKt;' \
+  'Lkotlin/collections/SetsKt;' \
+  'Lorg/junit/Assert;' \
+  'Lorg/junit/Test;' \
+  'Lcom/arabsguard/arabs_guard/PlatformContractTest;'; do
+  grep -Fq "Class descriptor  : '$required_class'" \
+    "$scratch_dir/dex-definitions.txt" || {
+    echo "Packaged APKs are missing required class definition: $required_class" >&2
     exit 1
   }
 done
