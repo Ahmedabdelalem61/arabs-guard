@@ -7,10 +7,11 @@ This list is ordered by release risk. A lower priority must not displace an unfi
 - [x] Support the Flutter SDK floor, Android 7.0/API 24.
 - [x] Run the release APK on every stable API from 24 through 36 using GitHub-hosted AOSP x86_64 emulators.
 - [x] On APIs 24–36, verify the exact runtime API, install the release and instrumentation APKs, launch/resume `MainActivity`, and run the native component/permission/VPN contract suite.
-- [ ] Run the same contract suite on API 37 when an accelerated hosted image becomes available, or on a physical Android 17 device; keep the current manual preview gate fail-fast.
+- [ ] Run the same contract suite on a physical Android 17/API 37 device, or when its hosted emulator transport becomes reliable. The manual physical gate is implemented and rejects emulators.
 - [x] Run Flutter tests for router-only, device-only, router+device validation, gateway auto-detection, catalog navigation, and the Arabic-region roadmap.
 - [x] Keep KVM acceleration, explicit ADB timeouts/recovery, per-job ceilings, and uploaded per-API diagnostics so no runner can hang indefinitely.
-- [ ] Before changing `targetSdk` to 37, add and test Android 17's prominent `ACCESS_LOCAL_NETWORK` runtime-permission flow, including denial and revocation. Do not request it while targeting SDK 36.
+- [x] Target SDK 37 and add prominent `ACCESS_LOCAL_NETWORK` consent, denial handling, defensive native enforcement, and fresh-install permission contracts.
+- [ ] Certify the Android 17 permission grant, denial, settings revocation, and successful router reconnection paths on physical API 37 hardware.
 
 ## P0 — Egyptian router safety and coverage gate
 
@@ -21,6 +22,7 @@ This list is ordered by release risk. A lower priority must not displace an unfi
 - [x] Fail closed on unknown models, firmware, page structure, WAN selection, or verification results.
 - [x] Keep automatic writes restricted to the exact Huawei DN8245V-56 adapter already validated and regression-tested.
 - [ ] Hardware-validation queue: ZTE H188A/H188A V2, Huawei HG8245W5-6T, Huawei B535-932A, ZTE K10/MF971R, Huawei H153, ZTE F670/F680, TP-Link VR/MR, and D-Link DSL-245GE. Each item needs a sanitized firmware/page capture and read-back test before automation can be enabled.
+- [x] Publish a secret-free capture protocol and machine-readable validation queue so new evidence can be regression-tested without collecting router credentials, cookies, addresses, SSIDs, or raw page dumps.
 - [ ] Add newly supplied ISP models only after model/firmware evidence is obtained; provider inventories change and cannot be safely inferred from branding.
 
 ## P1 — Arabic-world expansion

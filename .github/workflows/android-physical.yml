@@ -1,0 +1,74 @@
+name: Android physical-device certification
+
+on:
+  workflow_dispatch:
+    inputs:
+      api:
+        description: Exact API connected to the android-physical self-hosted runner
+        required: true
+        default: '37'
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.7'
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Install Android 17 compile SDK
+        run: sdkmanager 'platforms;android-37' 'build-tools;37.0.0' >/dev/null
+      - run: flutter analyze
+      - run: flutter test
+      - run: flutter build apk --release
+      - run: ./gradlew :app:assembleReleaseAndroidTest
+        working-directory: android
+      - name: Verify packaged Android runtimes
+        run: bash .github/scripts/verify-android-artifacts.sh
+      - name: Stage physical-certification APKs
+        run: |
+          mkdir -p artifacts
+          cp build/app/outputs/flutter-apk/app-release.apk artifacts/app-release.apk
+          cp build/app/outputs/apk/androidTest/release/app-release-androidTest.apk artifacts/app-release-androidTest.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: physical-certification-apks
+          path: artifacts/*.apk
+          retention-days: 1
+
+  physical-api:
+    needs: build
+    runs-on: [self-hosted, linux, android-physical]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: physical-certification-apks
+          path: artifacts
+      - name: Certify attached physical Android device
+        run: >-
+          bash .github/scripts/android-physical-smoke.sh
+          artifacts/app-release.apk
+          artifacts/app-release-androidTest.apk
+          '${{ inputs.api }}'
+      - name: Upload physical-device evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-api-${{ inputs.api }}-physical-evidence
+          path: test-results/api-${{ inputs.api }}
+          if-no-files-found: warn
+          retention-days: 7

@@ -38,7 +38,7 @@ Router automation only accepts numeric RFC1918/link-local/loopback IPv4 addresse
 Requirements:
 
 - Flutter 3.41.7 or compatible stable release
-- Android SDK 36
+- Android SDK 37 (the hosted workflows install it; the development machine does not need an emulator)
 - Java 17+
 
 ```bash
@@ -67,10 +67,11 @@ flutter pub run flutter_launcher_icons
 - `BIND_VPN_SERVICE`: enforced by Android on the DNS VPN service.
 - foreground-service permissions: required to keep a user-visible VPN alive on modern Android.
 - `POST_NOTIFICATIONS`: protection-status notification on Android 13+.
+- `ACCESS_LOCAL_NETWORK`: Android 17+ runtime permission used only when the user chooses router protection.
 
-The app targets SDK 36. Android 17 introduces the `ACCESS_LOCAL_NETWORK` runtime permission for apps targeting SDK 37+, so that permission flow must be implemented and tested when the project moves to target 37. It is deliberately not requested while targeting 36, as required by Android's compatibility guidance.
+The app targets SDK 37. Before router access on Android 17+, it presents a purpose-specific disclosure and then requests Android's `ACCESS_LOCAL_NETWORK` permission. Denial stops the router workflow before credentials or network requests are sent. Android 7–16 do not show this new prompt.
 
-The minimum supported version is Android 7.0 (API 24), which is the floor of the current Flutter SDK. The hosted compatibility workflow has passed every stable runtime API from 24 through 36 using lightweight AOSP images. Each job installs both the release app and its instrumentation APK, launches the Flutter activity, validates least-privilege components and permissions, verifies the fresh-install VPN-consent contract, and uploads API-specific evidence. The release archive is also checked for 16 KB page-size alignment. API 37 remains a manual preview gate because its currently published 16 KB-page emulator images cannot boot with acceleration on GitHub's standard hosted runners. No emulator image is downloaded to the development machine.
+The minimum supported version is Android 7.0 (API 24), which is the floor of the current Flutter SDK. The hosted compatibility workflow has passed every runtime API from 24 through 36 using lightweight AOSP images. Each job installs both the release app and its instrumentation APK, launches the Flutter activity, validates least-privilege components and permissions, verifies fresh-install consent contracts, and uploads API-specific evidence. The release archive is also checked for 16 KB page-size alignment. Android 17/API 37 is released, but its published emulator image still does not boot reliably with acceleration on GitHub's standard hosted runners. A manual physical-device workflow now runs the identical suite using an already-installed `adb` and downloads no emulator or AVD. No emulator image is downloaded to the development machine.
 
 Future structured local data is intentionally the last priority. The privacy and migration contract is documented in [docs/LOCAL_DATA_ARCHITECTURE.md](docs/LOCAL_DATA_ARCHITECTURE.md); no database dependency is included until a real user-facing feature needs durable state.
 
@@ -78,7 +79,7 @@ Future structured local data is intentionally the last priority. The privacy and
 
 Local demo APKs use the Flutter template's debug signing key. Before Play publishing, create and protect a production upload keystore, configure release signing outside Git, build an Android App Bundle, complete the Google Play `VpnService` declaration, and provide the required VPN review video and prominent-disclosure evidence.
 
-The current evaluation build is published as the [v1.0.0-alpha.4 prerelease](https://github.com/Ahmedabdelalem61/arabs-guard/releases/tag/v1.0.0-alpha.4).
+The current Android 17 evaluation build is published as the [v1.0.0-alpha.5 prerelease](https://github.com/Ahmedabdelalem61/arabs-guard/releases/tag/v1.0.0-alpha.5).
 
 ## Support
 

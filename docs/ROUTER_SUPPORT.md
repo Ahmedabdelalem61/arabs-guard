@@ -4,7 +4,7 @@ Router firmware is identified before any configuration request. Arabs Guard uses
 
 | Egyptian provider/use | Model family | Workflow | Release status |
 |---|---|---|---|
-| WE fixed broadband | Huawei DN8245V-56 | Internet WAN DNS override, then hybrid IP filter rule for outbound TCP/UDP ports 53 and 853, then read-back verification | Automatic; verified on the tested Egypt firmware |
+| WE fixed broadband | Huawei DN8245V-56 | Internet WAN DNS override, then hybrid IP filter rule for outbound TCP/UDP ports 53 and 853, then read-back verification | Automatic only while the tested runtime page contract matches |
 | WE / Vodafone fixed broadband | ZTE ZXHN H188A and H188A V2 | ZTE Internet WAN DNS and access-control workflow | Model-specific guided profile; automatic writes disabled until firmware validation |
 | Vodafone fiber | Huawei HG8245W5-6T family | Huawei ONT WAN/DHCP DNS workflow | Model-specific guided profile |
 | Egyptian fiber | Huawei EG8145/EG8245 and ZTE ZXHN F660/F670/F680/F673 families | Vendor-specific ONT WAN/DHCP DNS workflow | Model-specific guided profile |
@@ -25,21 +25,22 @@ Router firmware is identified before any configuration request. Arabs Guard uses
 The verified adapter:
 
 1. Connects only to the numeric private router address supplied by the user.
-2. Fingerprints `DN8245V-56` before signing in.
+2. Fingerprints the exact `DN8245V-56` model before signing in, then verifies the tested login/WAN/firewall page functions at every phase.
 3. Uses the router's own login JavaScript and browser session; credentials are not persisted.
 4. Selects the routed WAN whose service list contains `INTERNET`.
 5. Applies CleanBrowsing Family Filter IPv4 DNS endpoints.
 6. Requires the existing hybrid firewall policy and adds an idempotent upstream drop rule for external DNS ports 53 and 853.
 7. Reloads the firewall page and verifies the exact rule before reporting success.
 
-If the required WAN, page functions, editable DNS controls, hybrid policy, or read-back result differs, the adapter stops and reports an unsupported firmware state.
+The model string alone never proves page compatibility. If the required login function, WAN, page functions, editable DNS controls, hybrid policy, or read-back result differs, the adapter stops and reports an unsupported firmware state. The UI calls this a verified automatic *adapter*, not a guarantee for every firmware carrying that model name.
 
 ## Regression coverage
 
-- A shared canonical fixture matrix contains representative, noisy router-page fingerprints for every dedicated Egyptian workflow. Pure JVM tests exercise every fixture and ensure only the exact validated firmware can authorize automatic writes.
+- A shared canonical fixture matrix contains representative, noisy router-page fingerprints for every dedicated Egyptian workflow. Pure JVM tests exercise every fixture and ensure only the exact model assigned to the fail-closed adapter can enter its automatic path.
 - Flutter catalog tests require a one-to-one workflow-ID match with that native fixture matrix, preventing the UI catalog and Android detector from silently drifting apart.
 - The Huawei adapter is idempotent and verifies WAN DNS and firewall state after each write before reporting success.
-- Hosted AOSP Android jobs cover every stable runtime API from 24 through 36. Each runs package/activity smoke checks plus the native permission, component, lifecycle, and VPN-consent instrumentation contract. API 37 remains an explicit preview hardware gate. Heavy AVD images are not downloaded on the development machine. See [TESTING.md](TESTING.md).
+- A machine-readable validation queue must contain exactly one entry for every catalog workflow, and every automatic entry must have a sanitized structural contract fixture. See [ROUTER_CAPTURE_PROTOCOL.md](ROUTER_CAPTURE_PROTOCOL.md).
+- Hosted AOSP Android jobs cover every proven runtime API from 24 through 36. Each runs package/activity smoke checks plus native permission, component, lifecycle, VPN-consent, and Android 17 manifest contracts. API 37 remains an explicit physical-hardware certification gate because the hosted image transport is unreliable. Heavy AVD images are not downloaded on the development machine. See [TESTING.md](TESTING.md).
 
 These tests prevent workflow-selection regressions; they do not turn an unobserved ISP firmware revision into a verified automatic adapter. A hardware/firmware capture is still required before enabling writes for that revision.
 

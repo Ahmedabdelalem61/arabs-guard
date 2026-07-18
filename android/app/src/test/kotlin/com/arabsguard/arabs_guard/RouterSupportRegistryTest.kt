@@ -42,7 +42,7 @@ class RouterSupportRegistryTest {
     }
 
     @Test
-    fun `only exact validated firmware enables automatic writes`() {
+    fun `only exact model with a fail closed adapter enters automatic workflow`() {
         assertTrue(RouterSupportRegistry.detect("Huawei DN8245V-56").automatic)
         assertTrue(RouterSupportRegistry.detect("Huawei DN8245V‑56").automatic)
         assertFalse(RouterSupportRegistry.detect("Huawei DN8245V").automatic)

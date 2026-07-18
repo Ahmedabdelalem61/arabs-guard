@@ -17,6 +17,7 @@ import java.net.Inet4Address
 
 class MainActivity : FlutterActivity() {
     private var pendingVpnResult: MethodChannel.Result? = null
+    private var pendingLocalNetworkResult: MethodChannel.Result? = null
     private var pendingRouterResult: MethodChannel.Result? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -29,6 +30,7 @@ class MainActivity : FlutterActivity() {
                 "prepareVpn" -> prepareVpn(result)
                 "startVpn" -> startVpn(result)
                 "vpnStatus" -> result.success(GuardVpnService.isRunning)
+                "prepareLocalNetwork" -> prepareLocalNetwork(result)
                 "detectRouterGateway" -> detectRouterGateway(result)
                 "openVpnSettings" -> {
                     startActivity(Intent(Settings.ACTION_VPN_SETTINGS))
@@ -40,6 +42,12 @@ class MainActivity : FlutterActivity() {
                     val password = call.argument<String>("password").orEmpty()
                     if (address.isBlank() || username.isBlank() || password.isBlank()) {
                         result.error("missing_credentials", "Router address and credentials are required.", null)
+                    } else if (!hasLocalNetworkAccess()) {
+                        result.error(
+                            "local_network_permission_required",
+                            "Allow Nearby devices access before connecting to the router.",
+                            null,
+                        )
                     } else if (pendingRouterResult != null) {
                         result.error("setup_busy", "A router setup is already running.", null)
                     } else {
@@ -72,6 +80,31 @@ class MainActivity : FlutterActivity() {
         pendingVpnResult = result
         startActivityForResult(intent, REQUEST_VPN)
     }
+
+    private fun prepareLocalNetwork(result: MethodChannel.Result) {
+        if (hasLocalNetworkAccess()) {
+            result.success(true)
+            return
+        }
+        if (pendingLocalNetworkResult != null) {
+            result.error(
+                "local_network_busy",
+                "The Android local-network permission dialog is already open.",
+                null,
+            )
+            return
+        }
+        pendingLocalNetworkResult = result
+        requestPermissions(
+            arrayOf(Manifest.permission.ACCESS_LOCAL_NETWORK),
+            REQUEST_LOCAL_NETWORK,
+        )
+    }
+
+    private fun hasLocalNetworkAccess(): Boolean =
+        Build.VERSION.SDK_INT < 37 ||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_LOCAL_NETWORK) ==
+            PackageManager.PERMISSION_GRANTED
 
     private fun detectRouterGateway(result: MethodChannel.Result) {
         val connectivity = getSystemService(ConnectivityManager::class.java)
@@ -128,10 +161,25 @@ class MainActivity : FlutterActivity() {
         }
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray,
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_LOCAL_NETWORK) {
+            pendingLocalNetworkResult?.success(
+                grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED,
+            )
+            pendingLocalNetworkResult = null
+        }
+    }
+
     companion object {
         private const val CHANNEL = "com.arabsguard.guard/control"
         private const val REQUEST_VPN = 4101
         private const val REQUEST_ROUTER = 4102
         private const val REQUEST_NOTIFICATIONS = 4103
+        private const val REQUEST_LOCAL_NETWORK = 4104
     }
 }

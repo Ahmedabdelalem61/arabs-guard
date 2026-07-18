@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "evidenceId": "eg-we-dn8245v56-structural-v1",
+  "workflowId": "huawei_dn8245v56",
+  "provider": "WE",
+  "model": "Huawei DN8245V-56",
+  "firmwareFamily": "V100R019",
+  "sourceType": "sanitized_hardware_contract",
+  "automaticEligible": true,
+  "stages": {
+    "login": {
+      "requiredElements": ["txt_Username", "txt_Password"],
+      "requiredFunctions": ["LoginSubmit"]
+    },
+    "wan": {
+      "path": "/html/bbsp/wan/wan_tedata.asp",
+      "requiredFunctions": ["GetWanList", "setControl", "OnApply"],
+      "requiredSemantics": ["INTERNET", "IP_ROUTED", "IPv4DNSOverrideSwitch"],
+      "readBackRequired": true
+    },
+    "firewall": {
+      "path": "/html/bbsp/ipincoming/ipincoming.asp",
+      "requiredObjects": ["FilterIn", "Mode", "enblIn"],
+      "requiredFunctions": ["setControl", "SubmitEx"],
+      "requiredPolicy": "hybrid",
+      "readBackRequired": true
+    }
+  },
+  "safety": {
+    "numericPrivateHostOnly": true,
+    "sameHostNavigationOnly": true,
+    "idempotent": true,
+    "credentialsPersisted": false,
+    "unknownStructureFailsClosed": true
+  }
+}

@@ -170,7 +170,7 @@ class RouterAutomationActivity : Activity() {
             model = match.model
             when {
                 match.automatic && match.workflowId == "huawei_dn8245v56" -> {
-                    status.text = "Verified Huawei firmware found. Signing in…"
+                    status.text = "Compatible Huawei model found. Verifying its page contract…"
                     submitHuaweiLogin()
                 }
                 else -> unsupported(match.model, match.workflowId)

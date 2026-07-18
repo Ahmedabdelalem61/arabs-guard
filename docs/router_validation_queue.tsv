@@ -1,0 +1,19 @@
+# priority|workflow_id|Egyptian market|model families|evidence status|next required gate
+P0-01|huawei_dn8245v56|WE fixed broadband|Huawei DN8245V-56|structural_contract_verified|Repeat on each supplied firmware branch before broadening the fingerprint
+P0-02|zte_h188a|WE and Vodafone fixed broadband|ZTE ZXHN H188A / H188A V2|hardware_capture_required|Sanitized login WAN DNS and read-back contract
+P0-03|huawei_fiber_ont|Vodafone and Egyptian fiber|Huawei HG8245W5-6T / HG8245 / EG8145 / EG8245|hardware_capture_required|ISP ONT account permissions and WAN DNS read-back
+P0-04|zte_fiber_ont|Egyptian fiber|ZTE ZXHN F660 / F670 / F680 / F673|hardware_capture_required|Firmware-specific WAN and DHCP contract
+P0-05|huawei_h153|WE Air 5G|Huawei H153|hardware_capture_required|5G CPE DNS controls and reboot persistence
+P0-06|zte_k10|WE Air and mobile broadband|ZTE K10|hardware_capture_required|LAN DHCP DNS and reconnect persistence
+P0-07|zte_mifi|WE and e& mobile broadband|ZTE MF937 / MF971R / MF927U|hardware_capture_required|Per-firmware LAN DNS and mobile reconnect test
+P0-08|huawei_mobile_cpe|WE Vodafone Orange and e& mobile broadband|Huawei B310 / B315 / B525 / B535 / B612 / B818 / H112 / H122 / H155|hardware_capture_required|Branch-specific LAN DHCP and read-back contract
+P0-09|zte_legacy|WE and Orange legacy fixed broadband|ZTE ZXHN H168N / H108N|hardware_capture_required|Legacy WAN DNS contract with rollback evidence
+P0-10|huawei_legacy|Egyptian legacy fixed broadband|Huawei DG8045 / HG633 / HG630 / HG531 / HG532|hardware_capture_required|Legacy WAN DHCP and filter contract
+P0-11|tplink_dsl|Egyptian retail DSL|TP-Link TD-W9950 / W9960 / W9970 / Archer VR / Deco DSL|hardware_capture_required|Hardware-version and firmware-specific emulator plus device read-back
+P0-12|tplink_mobile|Egyptian retail and e& mobile broadband|TP-Link Archer MR / TL-MR6400|hardware_capture_required|Hardware-version LTE DNS and reconnect contract
+P0-13|dlink_dsl|Egyptian retail DSL|D-Link DSL-224 / DSL-245GE / DSL-2877 / DSL-2888|hardware_capture_required|Egypt firmware WAN DNS and rollback contract
+P0-14|nokia_home|WE mesh and Egyptian fiber|Nokia Beacon B1.1 / G-240|hardware_capture_required|Mesh upstream versus ONT ownership boundary
+P0-15|tenda_dsl|Egyptian retail and legacy DSL|Tenda V12 / D301 / D305|hardware_capture_required|Hardware-revision WAN DHCP contract
+P0-16|asus_dsl|Egyptian retail DSL|ASUS DSL gateways|hardware_capture_required|Exact model and firmware inventory before page capture
+P0-17|netgear_dsl|Egyptian retail DSL|NETGEAR D6220 / D6400 / D7000|hardware_capture_required|Exact firmware WAN DNS and read-back contract
+P0-18|technicolor_gateway|Egyptian legacy fixed broadband|Technicolor / Thomson TG gateways|hardware_capture_required|ISP firmware inventory and non-destructive page contract

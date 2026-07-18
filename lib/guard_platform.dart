@@ -47,6 +47,11 @@ class GuardPlatform {
     return await _channel.invokeMethod<bool>('vpnStatus') ?? false;
   }
 
+  static Future<bool> requestLocalNetworkConsent() async {
+    if (!_isAndroid) return false;
+    return await _channel.invokeMethod<bool>('prepareLocalNetwork') ?? false;
+  }
+
   static Future<String?> detectRouterGateway() async {
     if (!_isAndroid) return null;
     return _channel.invokeMethod<String>('detectRouterGateway');

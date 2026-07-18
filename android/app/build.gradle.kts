@@ -7,7 +7,10 @@ plugins {
 
 android {
     namespace = "com.arabsguard.arabs_guard"
-    compileSdk = flutter.compileSdkVersion
+    // Android 17 requires an explicit local-network permission flow for apps
+    // targeting API 37. Keep these values deliberate rather than inheriting a
+    // Flutter default that can lag the platform release.
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
     testBuildType = "release"
 
@@ -25,7 +28,7 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 37
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

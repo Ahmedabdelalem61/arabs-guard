@@ -9,7 +9,8 @@ internal data class RouterMatch(
 /**
  * Side-effect-free router fingerprinting shared by the WebView automation and
  * JVM regression tests. A match chooses a workflow; it never authorizes writes
- * unless [automatic] is true for an exact, validated firmware adapter.
+ * unless [automatic] is true for an exact model with a validated, fail-closed
+ * runtime page contract. The model match alone never proves firmware behavior.
  */
 internal object RouterSupportRegistry {
     private val unicodeDash = Regex("[\\u2010-\\u2015\\u2212]")

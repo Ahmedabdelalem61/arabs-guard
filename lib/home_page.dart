@@ -488,6 +488,21 @@ class _SetupPageState extends State<SetupPage> {
     var routerMessage = '';
     try {
       if (_usesRouter) {
+        setState(() => _progress = 'Waiting for local-network consent…');
+        final localNetworkAllowed = _demoMode
+            ? true
+            : await GuardPlatform.requestLocalNetworkConsent();
+        if (!localNetworkAllowed) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Router protection needs Android Nearby devices permission to reach your router. No settings were changed.',
+              ),
+            ),
+          );
+          return;
+        }
         setState(() => _progress = 'Detecting router and firmware…');
         final result = _demoMode
             ? await _demoRouterResult()
@@ -747,6 +762,19 @@ class _SetupPageState extends State<SetupPage> {
                   : null,
             ),
             const SizedBox(height: 10),
+            Container(
+              key: const Key('local-network-disclosure'),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF4DC),
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: const Text(
+                'Local-network permission\n\nOn Android 17+, Android asks for Nearby devices access so Arabs Guard can connect directly to the numeric router address shown above. It does not scan nearby people, collect device identities, or use location.',
+                style: TextStyle(height: 1.45, color: Color(0xFF5F4614)),
+              ),
+            ),
+            const SizedBox(height: 8),
             CheckboxListTile(
               key: const Key('router-consent'),
               contentPadding: EdgeInsets.zero,
@@ -908,7 +936,7 @@ class RouterCatalogPage extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
       children: [
         const Text(
-          'Arabs Guard fingerprints the router first. It runs automation only against a verified firmware adapter; unknown firmware receives no guessed commands.',
+          'Arabs Guard fingerprints the router first. Automatic adapters verify their required page structure at every phase; unknown or changed firmware receives no guessed commands.',
           style: TextStyle(height: 1.45),
         ),
         const SizedBox(height: 18),
@@ -968,7 +996,7 @@ class RouterCatalogPage extends StatelessWidget {
         ],
         const SizedBox(height: 8),
         const Text(
-          'Verified = automatic and tested against that firmware. Guided = model-specific workflow awaiting firmware verification. Router firmware can vary even when the printed model is the same.',
+          'Verified automatic = an exact model plus fail-closed runtime page checks and read-back verification. Guided = model-specific workflow awaiting hardware evidence. Firmware can vary even when the printed model is the same.',
           style: TextStyle(
             fontSize: 12,
             color: Color(0xFF697487),

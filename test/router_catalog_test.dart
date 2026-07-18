@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:arabs_guard/router_catalog.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -81,5 +82,86 @@ void main() {
           .toSet(),
       {'huawei_dn8245v56'},
     );
+  });
+
+  test('prioritized hardware queue covers every Egyptian workflow once', () {
+    final queueLines = File('docs/router_validation_queue.tsv')
+        .readAsLinesSync()
+        .where((line) => line.trim().isNotEmpty && !line.startsWith('#'))
+        .toList();
+    final rows = queueLines.map((line) {
+      final columns = line.split('|');
+      expect(columns, hasLength(6), reason: 'malformed queue row: $line');
+      return (priority: columns[0], workflowId: columns[1], status: columns[4]);
+    }).toList();
+
+    final catalogIds = egyptRouterCatalog
+        .map((profile) => profile.workflowId)
+        .toSet();
+    expect(rows.map((row) => row.workflowId).toSet(), catalogIds);
+    expect(rows, hasLength(catalogIds.length));
+    expect(rows.map((row) => row.priority).toSet(), hasLength(rows.length));
+    expect(
+      rows
+          .where((row) => row.status == 'structural_contract_verified')
+          .map((row) => row.workflowId)
+          .toSet(),
+      {'huawei_dn8245v56'},
+    );
+  });
+
+  test('every automatic adapter has a secret-free structural contract', () {
+    final verified = egyptRouterCatalog.where(
+      (profile) => profile.automation == RouterAutomation.verified,
+    );
+    final addressPattern = RegExp(r'\b(?:\d{1,3}\.){3}\d{1,3}\b');
+    final macPattern = RegExp(r'\b(?:[0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}\b');
+    const forbiddenKeys = <String>{
+      'username',
+      'password',
+      'cookie',
+      'token',
+      'ssid',
+      'mac',
+      'serial',
+      'address',
+    };
+
+    void inspect(Object? value) {
+      if (value is Map<String, Object?>) {
+        for (final entry in value.entries) {
+          expect(
+            forbiddenKeys,
+            isNot(contains(entry.key.toLowerCase())),
+            reason: 'sensitive contract key: ${entry.key}',
+          );
+          inspect(entry.value);
+        }
+      } else if (value is List<Object?>) {
+        value.forEach(inspect);
+      } else if (value is String) {
+        expect(addressPattern.hasMatch(value), isFalse);
+        expect(macPattern.hasMatch(value), isFalse);
+      }
+    }
+
+    for (final profile in verified) {
+      final file = File(
+        'test/fixtures/router_contracts/${profile.workflowId}.json',
+      );
+      expect(
+        file.existsSync(),
+        isTrue,
+        reason: 'missing ${profile.workflowId}',
+      );
+      final contract =
+          jsonDecode(file.readAsStringSync()) as Map<String, Object?>;
+      expect(contract['schemaVersion'], 1);
+      expect(contract['workflowId'], profile.workflowId);
+      expect(contract['automaticEligible'], isTrue);
+      expect(contract['stages'], isA<Map<String, Object?>>());
+      expect(contract['safety'], isA<Map<String, Object?>>());
+      inspect(contract);
+    }
   });
 }

@@ -9,6 +9,7 @@ Arabs Guard is designed to provide family-safe DNS filtering without collecting 
 - Router address, username, and password entered by the user are processed locally only while the requested router setup is running.
 - DNS queries from the device are processed by a local Android VPN interface and sent through an encrypted DNS-over-HTTPS connection to the CleanBrowsing Family Filter.
 - Basic in-app protection status is held locally while the app runs.
+- On Android 17+, local-network access is used only after the user chooses router protection and grants Android's Nearby devices permission. The app connects only to the numeric private router address selected in setup.
 
 ## Data the app does not collect
 
@@ -16,6 +17,7 @@ Arabs Guard is designed to provide family-safe DNS filtering without collecting 
 - Browsing history and DNS-query history are not stored by the app.
 - The app contains no advertising or analytics SDK.
 - The app does not request contacts, phone, SMS, location, camera, microphone, or storage access.
+- The app does not scan for nearby people or collect local-device identities, SSIDs, or network inventories.
 
 CleanBrowsing operates the upstream Family Filter and applies its own service terms and privacy practices. Review those practices before enabling device protection.
 

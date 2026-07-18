@@ -24,6 +24,8 @@ jobs:
           channel: stable
           cache: true
       - run: flutter pub get
+      - name: Install Android 17 compile SDK
+        run: sdkmanager 'platforms;android-37' 'build-tools;37.0.0' >/dev/null
       - run: flutter analyze
       - run: flutter test
       - run: ./gradlew :app:testDebugUnitTest
@@ -58,6 +60,6 @@ jobs:
           gh release create "$GITHUB_REF_NAME" artifacts/* \
             --prerelease \
             --title "Arabs Guard ${GITHUB_REF_NAME#v}" \
-            --notes "Evaluation prerelease for Android 7.0+ (API 24+), with hosted runtime tests passing on every stable API from 24 through 36. Includes router gateway auto-detection, firmware fingerprinting, universal and per-ABI APKs, an AAB, SHA-256 checksums, 16 KB-alignment validation, and a safe simulated demo. API 37 runtime certification remains pending because its preview emulator images cannot boot with acceleration on GitHub's standard hosted runners. Router writes remain enabled only for validated firmware. Evaluation artifacts use Android debug signing; configure a production upload key before Play Store submission."
+            --notes "Evaluation prerelease targeting Android 17/API 37 for Android 7.0+ devices, with hosted runtime tests passing on APIs 24 through 36. Includes explicit Android 17 local-network consent, router gateway auto-detection, firmware fingerprinting, universal and per-ABI APKs, an AAB, SHA-256 checksums, 16 KB-alignment validation, and a safe simulated demo. API 37 physical-device runtime certification remains pending because its emulator image cannot boot reliably on GitHub's standard hosted runners. Router writes remain enabled only for a validated structural firmware contract. Evaluation artifacts use Android debug signing; configure a production upload key before Play Store submission."
         env:
           GH_TOKEN: ${{ github.token }}

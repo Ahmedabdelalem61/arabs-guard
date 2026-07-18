@@ -27,6 +27,10 @@ readonly dexdump_bin="$(
   find "$sdk_root/build-tools" -mindepth 2 -maxdepth 2 -type f -name dexdump \
     -print | sort -V | tail -1
 )"
+readonly aapt_bin="$(
+  find "$sdk_root/build-tools" -mindepth 2 -maxdepth 2 -type f -name aapt \
+    -print | sort -V | tail -1
+)"
 readonly zipalign_bin="$(
   find "$sdk_root/build-tools" -mindepth 2 -maxdepth 2 -type f -name zipalign \
     -print | sort -V | tail -1
@@ -39,8 +43,27 @@ if [[ ! -x "$zipalign_bin" ]]; then
   echo "Android SDK zipalign was not found." >&2
   exit 1
 fi
+if [[ ! -x "$aapt_bin" ]]; then
+  echo "Android SDK aapt was not found." >&2
+  exit 1
+fi
 
 "$zipalign_bin" -c -P 16 4 "$app_apk"
+
+"$aapt_bin" dump badging "$app_apk" > "$scratch_dir/app-badging.txt"
+grep -Fq "sdkVersion:'24'" "$scratch_dir/app-badging.txt" || {
+  echo "Release APK does not declare minSdk 24." >&2
+  exit 1
+}
+grep -Fq "targetSdkVersion:'37'" "$scratch_dir/app-badging.txt" || {
+  echo "Release APK does not target Android 17/API 37." >&2
+  exit 1
+}
+grep -Fq "uses-permission: name='android.permission.ACCESS_LOCAL_NETWORK'" \
+  "$scratch_dir/app-badging.txt" || {
+    echo "Release APK is missing Android 17 local-network permission." >&2
+    exit 1
+  }
 
 unzip -Z1 "$app_apk" > "$scratch_dir/app-entries.txt"
 for abi in armeabi-v7a arm64-v8a x86_64; do

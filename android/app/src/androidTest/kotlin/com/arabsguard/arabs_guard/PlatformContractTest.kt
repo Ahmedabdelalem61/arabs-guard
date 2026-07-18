@@ -24,9 +24,12 @@ class PlatformContractTest {
 
     @Test
     fun runtimeAndPackageSdkContractIsSupported() {
-        assertTrue("runtime API must be in the supported matrix", Build.VERSION.SDK_INT in 24..37)
+        val expectedApi = instrumentation.arguments.getString("expectedApi")?.toIntOrNull()
+        assertNotNull("the smoke runner must provide its expected API", expectedApi)
+        assertEquals("runtime must match the selected test device", expectedApi, Build.VERSION.SDK_INT)
+        assertTrue("runtime API must meet minSdk", Build.VERSION.SDK_INT >= 24)
         assertEquals(24, context.applicationInfo.minSdkVersion)
-        assertEquals(36, context.applicationInfo.targetSdkVersion)
+        assertEquals(37, context.applicationInfo.targetSdkVersion)
     }
 
     @Test
@@ -77,6 +80,7 @@ class PlatformContractTest {
             Manifest.permission.ACCESS_NETWORK_STATE,
             Manifest.permission.FOREGROUND_SERVICE,
             Manifest.permission.POST_NOTIFICATIONS,
+            Manifest.permission.ACCESS_LOCAL_NETWORK,
         )
         assertTrue("required permissions are missing: ${required - requested}", requested.containsAll(required))
 
@@ -97,9 +101,16 @@ class PlatformContractTest {
         assertTrue("unrelated sensitive permissions found: ${requested intersect forbidden}",
             requested.intersect(forbidden).isEmpty())
 
-        // SDK 36 targets receive implicit LAN access on Android 17. This new
-        // permission must be added only together with the targetSdk 37 consent flow.
-        assertFalse(requested.contains("android.permission.ACCESS_LOCAL_NETWORK"))
+    }
+
+    @Test
+    fun freshInstallRequiresAndroid17LocalNetworkConsent() {
+        if (Build.VERSION.SDK_INT < 37) return
+        assertEquals(
+            "a fresh install must not silently receive broad local-network access",
+            PackageManager.PERMISSION_DENIED,
+            context.checkSelfPermission(Manifest.permission.ACCESS_LOCAL_NETWORK),
+        )
     }
 
     @Test

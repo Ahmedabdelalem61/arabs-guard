@@ -73,7 +73,7 @@ wait_for_android_services() {
 }
 
 if ! wait_for_device; then
-  echo "Android emulator did not become available through ADB." >&2
+  echo "Android test device did not become available through ADB." >&2
   exit 1
 fi
 
@@ -82,13 +82,23 @@ if ! wait_for_android_services; then
   exit 1
 fi
 
+if [[ "${ANDROID_SMOKE_REQUIRE_PHYSICAL:-0}" == "1" ]]; then
+  device_serial="$(adb_short get-serialno 2>/dev/null || true)"
+  qemu_marker="$(adb_short shell getprop ro.kernel.qemu 2>/dev/null || true)"
+  qemu_marker="${qemu_marker//$'\r'/}"
+  if [[ "$device_serial" == emulator-* || "$qemu_marker" == "1" ]]; then
+    echo "A physical Android device is required, but ADB selected an emulator." >&2
+    exit 1
+  fi
+fi
+
 mkdir -p "$results_dir"
 actual_api="$(adb_short shell getprop ro.build.version.sdk 2>/dev/null || true)"
 actual_api="${actual_api//$'\r'/}"
 printf 'expected_api=%s\nactual_api=%s\n' "$expected_api" "$actual_api" \
   > "$results_dir/runtime.txt"
 if [[ "$actual_api" != "$expected_api" ]]; then
-  echo "Expected Android API $expected_api but emulator reports $actual_api." >&2
+  echo "Expected Android API $expected_api but the test device reports $actual_api." >&2
   exit 1
 fi
 
@@ -152,6 +162,7 @@ done
 test "$activity_ready" = true
 
 if ! run_with_timeout 300 adb shell am instrument -w -r \
+  -e expectedApi "$expected_api" \
   -e class "$package_name.PlatformContractTest" "$instrumentation_name" \
   | tee "$results_dir/instrumentation.txt"; then
   echo "Android instrumentation command failed on API $expected_api." >&2

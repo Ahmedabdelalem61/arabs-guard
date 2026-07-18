@@ -19,7 +19,7 @@ on:
   workflow_dispatch:
     inputs:
       api:
-        description: Android API to test (all runs the stable API 24-36 matrix; API 37 is preview-only)
+        description: Android API to test (all runs the proven API 24-36 matrix; API 37 is an infrastructure probe)
         required: true
         default: all
         type: choice
@@ -59,6 +59,8 @@ jobs:
           channel: stable
           cache: true
       - run: flutter pub get
+      - name: Install Android 17 compile SDK
+        run: sdkmanager 'platforms;android-37' 'build-tools;37.0.0' >/dev/null
       - run: flutter analyze
       - run: flutter test
       - run: ./gradlew :app:testDebugUnitTest
@@ -117,6 +119,7 @@ jobs:
           emulator-boot-timeout: ${{ matrix.api == 37 && 600 || 1800 }}
           pre-emulator-launch-script: adb start-server
           disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -no-metrics
           script: bash .github/scripts/android-smoke.sh artifacts/app-release.apk artifacts/app-release-androidTest.apk ${{ matrix.api }}
       - name: Upload API ${{ matrix.api }} test evidence
         if: always()
