@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:arabs_guard/router_catalog.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -49,5 +51,35 @@ void main() {
     expect(carriers, contains('Vodafone'));
     expect(carriers, contains('Orange'));
     expect(carriers, contains('e& Egypt'));
+  });
+
+  test('Dart catalog and native fingerprint matrix stay in sync', () {
+    final fixtureLines =
+        File('android/app/src/test/resources/egypt_router_fixtures.txt')
+            .readAsLinesSync()
+            .where((line) => line.trim().isNotEmpty && !line.startsWith('#'));
+    final fixtures = fixtureLines.map((line) {
+      final columns = line.split('|');
+      expect(columns, hasLength(3), reason: 'malformed fixture: $line');
+      return (workflowId: columns[0], automatic: columns[1] == 'true');
+    }).toList();
+
+    final catalogIds = egyptRouterCatalog
+        .map((profile) => profile.workflowId)
+        .toSet();
+    final fixtureIds = fixtures.map((fixture) => fixture.workflowId).toSet();
+
+    expect(
+      egyptRouterCatalog.map((profile) => profile.workflowId),
+      hasLength(catalogIds.length),
+    );
+    expect(fixtureIds, catalogIds);
+    expect(
+      fixtures
+          .where((fixture) => fixture.automatic)
+          .map((fixture) => fixture.workflowId)
+          .toSet(),
+      {'huawei_dn8245v56'},
+    );
   });
 }

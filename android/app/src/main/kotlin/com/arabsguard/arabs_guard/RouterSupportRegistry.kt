@@ -12,10 +12,17 @@ internal data class RouterMatch(
  * unless [automatic] is true for an exact, validated firmware adapter.
  */
 internal object RouterSupportRegistry {
+    private val unicodeDash = Regex("[\\u2010-\\u2015\\u2212]")
+    private val verifiedHuaweiDn8245v56 =
+        Regex("(?<![a-z0-9])dn8245v[\\s_-]*56(?![a-z0-9])")
+
     fun detect(rawFingerprint: String): RouterMatch {
-        val value = rawFingerprint.lowercase()
+        val value = rawFingerprint
+            .lowercase()
+            .replace(unicodeDash, "-")
+            .replace('\u00a0', ' ')
         return when {
-            value.contains("dn8245v-56") -> RouterMatch(
+            verifiedHuaweiDn8245v56.containsMatchIn(value) -> RouterMatch(
                 "Huawei DN8245V-56",
                 "huawei_dn8245v56",
                 automatic = true,

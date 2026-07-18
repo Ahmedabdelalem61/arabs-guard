@@ -254,6 +254,19 @@ void main() {
     expect(find.text('Egypt router compatibility'), findsOneWidget);
     expect(find.textContaining('DN8245V-56'), findsOneWidget);
     expect(find.textContaining('H188A'), findsOneWidget);
+    expect(find.text('Verified automatic'), findsOneWidget);
+
+    final lastWorkflow = find.byKey(
+      const Key('router-profile-technicolor_gateway'),
+    );
+    await tester.scrollUntilVisible(
+      lastWorkflow,
+      500,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(lastWorkflow, findsOneWidget);
+    expect(find.textContaining('Technicolor / Thomson'), findsOneWidget);
+    expect(find.text('Detection only'), findsWidgets);
   });
 
   testWidgets('opens transparent Arabic-world coming-soon roadmap', (

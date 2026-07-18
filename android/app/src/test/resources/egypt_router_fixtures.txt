@@ -1,0 +1,38 @@
+# workflow_id|automatic|representative router-page fingerprint
+huawei_dn8245v56|true|WE Home Gateway Huawei DN8245V-56 software V100R019
+huawei_dn8245v56|true|Huawei DN8245V‑56 Internet Gateway
+zte_h188a|false|ZTE Corporation ZXHN H188A V2 AC1200
+zte_h188a|false|WE Premium Router ZXHN H188A
+huawei_fiber_ont|false|Huawei EchoLife HG8245W5-6T Optical Network Terminal
+huawei_fiber_ont|false|Vodafone Fiber EG8145V5 Home Gateway
+zte_fiber_ont|false|ZTE ZXHN F670L fiber gateway
+zte_fiber_ont|false|ZXHN F680 ZTE optical network terminal
+huawei_h153|false|Huawei 5G CPE H153-381
+huawei_h153|false|WE Air H153 5G Home Gateway
+zte_k10|false|ZTE CAT4 Router K10
+zte_k10|false|WE Air ZTE K10 LTE Router
+zte_mifi|false|ZTE MF971R LTE Mobile Wi-Fi
+zte_mifi|false|ZTE MF927U MiFi Router
+zte_legacy|false|ZTE ZXHN H168N V3.1
+zte_legacy|false|ZXHN H108N ADSL Home Gateway
+huawei_mobile_cpe|false|Huawei B535-932A Home Wireless Router
+huawei_mobile_cpe|false|Huawei B315s-608 LTE CPE
+huawei_mobile_cpe|false|Huawei H155-381 5G CPE
+huawei_legacy|false|Huawei Home Gateway DG8045
+huawei_legacy|false|Huawei HG633 VDSL Router
+tplink_dsl|false|TP-Link Archer VR600 V3 DSL Modem Router
+tplink_dsl|false|TP-Link TD-W9960 VDSL Gateway
+tplink_dsl|false|TP-Link Deco X50-DSL
+tplink_mobile|false|TP-Link Archer MR600 4G+ Router
+tplink_mobile|false|TP-Link TL-MR6400 LTE Router
+dlink_dsl|false|D-Link DSL-245GE EG_1.00b07
+dlink_dsl|false|D-Link DSL-224 VDSL2 Gateway
+nokia_home|false|Nokia WiFi Beacon B1.1
+nokia_home|false|Nokia G-240W-C Optical Network Terminal
+tenda_dsl|false|Tenda V12 AC1200 VDSL Modem Router
+tenda_dsl|false|Tenda D301 ADSL2+ Modem Router
+asus_dsl|false|ASUS DSL-AC68U Dual-band Modem Router
+netgear_dsl|false|NETGEAR D7000 Nighthawk DSL Router
+netgear_dsl|false|NETGEAR D6220 DSL Modem Router
+technicolor_gateway|false|Technicolor TG589vn Gateway
+technicolor_gateway|false|Thomson TG585 v8 Home Gateway

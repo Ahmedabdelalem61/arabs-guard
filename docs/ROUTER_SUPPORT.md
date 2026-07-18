@@ -36,10 +36,10 @@ If the required WAN, page functions, editable DNS controls, hybrid policy, or re
 
 ## Regression coverage
 
-- Pure JVM fingerprint fixtures exercise every router family and ensure only the exact validated firmware can authorize automatic writes.
-- Flutter catalog tests keep the in-app compatibility list aligned with the supported fingerprint families.
+- A shared canonical fixture matrix contains representative, noisy router-page fingerprints for every dedicated Egyptian workflow. Pure JVM tests exercise every fixture and ensure only the exact validated firmware can authorize automatic writes.
+- Flutter catalog tests require a one-to-one workflow-ID match with that native fixture matrix, preventing the UI catalog and Android detector from silently drifting apart.
 - The Huawei adapter is idempotent and verifies WAN DNS and firewall state after each write before reporting success.
-- Hosted AOSP Android jobs cover every runtime API from 24 through 37. Each runs package/activity smoke checks plus the native permission, component, lifecycle, and VPN-consent instrumentation contract. Heavy AVD images are not downloaded on the development machine. See [TESTING.md](TESTING.md).
+- Hosted AOSP Android jobs cover every stable runtime API from 24 through 36. Each runs package/activity smoke checks plus the native permission, component, lifecycle, and VPN-consent instrumentation contract. API 37 remains an explicit preview hardware gate. Heavy AVD images are not downloaded on the development machine. See [TESTING.md](TESTING.md).
 
 These tests prevent workflow-selection regressions; they do not turn an unobserved ISP firmware revision into a verified automatic adapter. A hardware/firmware capture is still required before enabling writes for that revision.
 
@@ -51,6 +51,7 @@ Provider catalog pages used to establish current Egyptian model families:
 - [Vodafone Dual Band Router — ZTE ZXHN H188A V2](https://web.vodafone.com.eg/en/dualband-router)
 - [Vodafone home compound/fiber support — Huawei HG8245W5-6T](https://web.vodafone.com.eg/ar/home-compound-support-details)
 - [WE Air H153 device](https://te.eg/en/web/guest/w/weairh153device)
+- [WE confirms current Home 5G expansion and router/MiFi support](https://te.eg/en/web/guest/personal/home-5g)
 - [WE 4G routers](https://www.te.eg/web/guest/personal/devices/4g-routers)
 - [WE router/mesh catalog](https://www.te.eg/en/personal/devices/routers)
 - [TP-Link Egypt modem-router catalog](https://www.tp-link.com/eg/home-networking/all-gateways/)

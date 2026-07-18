@@ -914,6 +914,7 @@ class RouterCatalogPage extends StatelessWidget {
         const SizedBox(height: 18),
         for (final profile in egyptRouterCatalog) ...[
           Card(
+            key: Key('router-profile-${profile.workflowId}'),
             elevation: 0,
             color: Colors.white,
             shape: RoundedRectangleBorder(
@@ -947,6 +948,8 @@ class RouterCatalogPage extends StatelessWidget {
                         const SizedBox(height: 3),
                         Text(profile.models),
                         const SizedBox(height: 8),
+                        _RouterStatusBadge(automation: profile.automation),
+                        const SizedBox(height: 8),
                         Text(
                           profile.workflow,
                           style: const TextStyle(
@@ -975,6 +978,52 @@ class RouterCatalogPage extends StatelessWidget {
       ],
     ),
   );
+}
+
+class _RouterStatusBadge extends StatelessWidget {
+  const _RouterStatusBadge({required this.automation});
+
+  final RouterAutomation automation;
+
+  @override
+  Widget build(BuildContext context) {
+    final (label, foreground, background) = switch (automation) {
+      RouterAutomation.verified => (
+        'Verified automatic',
+        const Color(0xFF087A6B),
+        const Color(0xFFE4F7F2),
+      ),
+      RouterAutomation.guided => (
+        'Guided workflow',
+        const Color(0xFF8B5D00),
+        const Color(0xFFFFF3D6),
+      ),
+      RouterAutomation.detectOnly => (
+        'Detection only',
+        const Color(0xFF596579),
+        const Color(0xFFF0F3F7),
+      ),
+    };
+
+    return Align(
+      alignment: AlignmentDirectional.centerStart,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+        decoration: BoxDecoration(
+          color: background,
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: foreground,
+            fontSize: 11,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class RegionRoadmapPage extends StatelessWidget {

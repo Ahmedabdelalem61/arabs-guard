@@ -6,38 +6,48 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class RouterSupportRegistryTest {
-    @Test
-    fun `every catalog family selects its dedicated workflow`() {
-        val fixtures = mapOf(
-            "WE Home Gateway DN8245V-56" to "huawei_dn8245v56",
-            "ZTE Corporation ZXHN H188A V2" to "zte_h188a",
-            "Huawei EchoLife HG8245W5-6T" to "huawei_fiber_ont",
-            "Huawei 5G CPE H153-381" to "huawei_h153",
-            "ZTE CAT4 Router K10" to "zte_k10",
-            "ZTE MF971R LTE" to "zte_mifi",
-            "ZTE ZXHN F670L fiber gateway" to "zte_fiber_ont",
-            "ZTE ZXHN H168N" to "zte_legacy",
-            "Huawei B315s-608 LTE CPE" to "huawei_mobile_cpe",
-            "Huawei Home Gateway DG8045" to "huawei_legacy",
-            "TP-Link Archer VR600" to "tplink_dsl",
-            "TP-Link Archer MR600" to "tplink_mobile",
-            "D-Link DSL-245GE EG_1.00b07" to "dlink_dsl",
-            "Nokia WiFi Beacon B1.1" to "nokia_home",
-            "Tenda V12 AC1200" to "tenda_dsl",
-            "ASUS DSL-AC68U" to "asus_dsl",
-            "NETGEAR D7000" to "netgear_dsl",
-            "Technicolor TG589vn" to "technicolor_gateway",
-        )
+    private data class RouterFixture(
+        val workflowId: String,
+        val automatic: Boolean,
+        val fingerprint: String,
+    )
 
-        fixtures.forEach { (fingerprint, expectedWorkflow) ->
-            assertEquals(expectedWorkflow, RouterSupportRegistry.detect(fingerprint).workflowId)
+    private fun egyptRouterFixtures(): List<RouterFixture> {
+        val stream = checkNotNull(javaClass.classLoader?.getResourceAsStream("egypt_router_fixtures.txt")) {
+            "Missing canonical Egyptian router fixture matrix."
+        }
+        return stream.bufferedReader().useLines { lines ->
+            lines
+                .filter { it.isNotBlank() && !it.startsWith('#') }
+                .map { line ->
+                    val columns = line.split('|', limit = 3)
+                    check(columns.size == 3) { "Malformed router fixture: $line" }
+                    RouterFixture(
+                        workflowId = columns[0],
+                        automatic = columns[1].toBooleanStrict(),
+                        fingerprint = columns[2],
+                    )
+                }
+                .toList()
+        }
+    }
+
+    @Test
+    fun `every canonical Egyptian fixture selects its dedicated workflow`() {
+        egyptRouterFixtures().forEach { fixture ->
+            val match = RouterSupportRegistry.detect(fixture.fingerprint)
+            assertEquals(fixture.workflowId, match.workflowId)
+            assertEquals(fixture.automatic, match.automatic)
         }
     }
 
     @Test
     fun `only exact validated firmware enables automatic writes`() {
         assertTrue(RouterSupportRegistry.detect("Huawei DN8245V-56").automatic)
+        assertTrue(RouterSupportRegistry.detect("Huawei DN8245V‑56").automatic)
         assertFalse(RouterSupportRegistry.detect("Huawei DN8245V").automatic)
+        assertFalse(RouterSupportRegistry.detect("Huawei DN8245V-560").automatic)
+        assertFalse(RouterSupportRegistry.detect("Huawei XDN8245V-56").automatic)
         assertFalse(RouterSupportRegistry.detect("ZTE ZXHN H188A").automatic)
         assertFalse(RouterSupportRegistry.detect("TP-Link Archer VR600").automatic)
     }
@@ -59,5 +69,31 @@ class RouterSupportRegistryTest {
         val match = RouterSupportRegistry.detect("Unrecognized Egyptian ISP router")
         assertEquals("unknown", match.workflowId)
         assertFalse(match.automatic)
+    }
+
+    @Test
+    fun `canonical matrix covers every dedicated Egyptian workflow`() {
+        val expected = setOf(
+            "huawei_dn8245v56",
+            "zte_h188a",
+            "huawei_fiber_ont",
+            "zte_fiber_ont",
+            "huawei_h153",
+            "zte_k10",
+            "zte_mifi",
+            "zte_legacy",
+            "huawei_mobile_cpe",
+            "huawei_legacy",
+            "tplink_dsl",
+            "tplink_mobile",
+            "dlink_dsl",
+            "nokia_home",
+            "tenda_dsl",
+            "asus_dsl",
+            "netgear_dsl",
+            "technicolor_gateway",
+        )
+
+        assertEquals(expected, egyptRouterFixtures().map { it.workflowId }.toSet())
     }
 }

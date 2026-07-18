@@ -14,9 +14,9 @@ Arabs Guard treats compatibility as a release gate, not a sample-device claim. T
 - Rejection when the selected layer disclosure is not accepted.
 - Egyptian compatibility catalog navigation.
 - Arabic-world roadmap navigation and exact, unique coverage of all 22 Arab League countries.
-- Egyptian router catalog model/provider assertions and the invariant that only validated firmware claims automation.
+- Egyptian router catalog model/provider assertions, one-to-one workflow-ID parity with the native fingerprint matrix, and the invariant that only validated firmware claims automation.
 
-Pure JVM tests cover every native router-fingerprint family, specific-before-generic matching, and fail-closed handling for unknown firmware.
+Pure JVM tests load the same canonical Egyptian fixture matrix, cover multiple real-world page fingerprints for every native router workflow, normalize common Unicode page punctuation, enforce specific-before-generic matching, reject near-match automatic-write false positives, and fail closed for unknown firmware.
 
 Before any emulator starts, a package gate verifies both APK archives, Flutter application libraries for `armeabi-v7a`, `arm64-v8a`, and `x86_64`, and actual DEX class definitions for the instrumentation runner, tracing runtime, lifecycle, registry, and contract tests. It does not accept a mere class-reference string. A stripped or incomplete runtime therefore fails once in the build job instead of wasting the entire emulator matrix.
 
