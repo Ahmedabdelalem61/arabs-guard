@@ -327,6 +327,8 @@ void main() {
 
     expect(find.text('Arabic-world roadmap'), findsOneWidget);
     expect(find.text('مصر هي نقطة البداية'), findsOneWidget);
+    expect(find.text('السعودية'), findsOneWidget);
+    expect(find.text('Saudi Arabia'), findsOneWidget);
     expect(find.text('SOON'), findsWidgets);
   });
 

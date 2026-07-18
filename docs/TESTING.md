@@ -2,6 +2,8 @@
 
 Arabs Guard treats compatibility as a release gate, not a sample-device claim. The matrix is intentionally cloud-only so emulator images and ADB workloads do not consume the development machine.
 
+For catalog, UI, or documentation changes that do not alter the Android runtime, the manual workflow's `verify-only` input runs Flutter analysis/tests, JVM tests, release and instrumentation APK builds, manifest/DEX checks, and 16 KB-alignment verification without starting an emulator. Runtime-affecting releases still require the complete API matrix.
+
 ## Fast deterministic layer
 
 `flutter test` covers:

@@ -104,7 +104,8 @@ const egyptRouterCatalog = <RouterProfile>[
     workflowId: 'tplink_dsl',
     carrier: 'Egypt retail',
     vendor: 'TP-Link',
-    models: 'TD-W9950/W9960/W9970, Archer VR300/400/600/2100, Deco X20/X50-DSL',
+    models:
+        'TD-W8961N/W9950/W9960/W9970, Archer VR300/400/600/2100, Deco X20/X50-DSL',
     workflow: 'TP-Link Internet/DHCP DNS and parental-control workflow',
     automation: RouterAutomation.detectOnly,
   ),

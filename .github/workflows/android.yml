@@ -19,11 +19,12 @@ on:
   workflow_dispatch:
     inputs:
       api:
-        description: Android API to test (all runs the proven API 24-36 matrix; API 37 is an infrastructure probe)
+        description: Android API to test (verify-only uses no emulator; all runs API 24-36; API 37 is an infrastructure probe)
         required: true
         default: all
         type: choice
         options:
+          - verify-only
           - all
           - '24'
           - '25'
@@ -75,11 +76,13 @@ jobs:
       - name: Verify packaged Android runtimes
         run: bash .github/scripts/verify-android-artifacts.sh
       - uses: actions/upload-artifact@v4
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.api != 'verify-only' }}
         with:
           name: arabs-guard-smoke-apk
           path: build/app/outputs/flutter-apk/app-release.apk
           retention-days: 7
       - uses: actions/upload-artifact@v4
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.api != 'verify-only' }}
         with:
           name: arabs-guard-contract-tests
           path: build/app/outputs/apk/androidTest/release/app-release-androidTest.apk
@@ -88,6 +91,7 @@ jobs:
   android-api-smoke:
     name: Android API ${{ matrix.api }} regression test
     needs: verify
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.api != 'verify-only' }}
     # API 37's hosted ARM runner currently exposes no /dev/kvm. Use the
     # KVM-capable x64 runner with the stable 37.1 x86_64 system image instead.
     runs-on: ubuntu-latest
@@ -96,7 +100,7 @@ jobs:
       fail-fast: false
       max-parallel: 4
       matrix:
-        api: ${{ fromJSON(github.event_name == 'workflow_dispatch' && inputs.api != 'all' && format('[{0}]', inputs.api) || '[24,25,26,27,28,29,30,31,32,33,34,35,36]') }}
+        api: ${{ fromJSON(github.event_name == 'workflow_dispatch' && inputs.api != 'all' && inputs.api != 'verify-only' && format('[{0}]', inputs.api) || '[24,25,26,27,28,29,30,31,32,33,34,35,36]') }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4

@@ -22,6 +22,7 @@ huawei_legacy|false|Huawei Home Gateway DG8045
 huawei_legacy|false|Huawei HG633 VDSL Router
 tplink_dsl|false|TP-Link Archer VR600 V3 DSL Modem Router
 tplink_dsl|false|TP-Link TD-W9960 VDSL Gateway
+tplink_dsl|false|TP-Link TD-W8961N V3 300Mbps ADSL2+ Modem Router
 tplink_dsl|false|TP-Link Deco X50-DSL
 tplink_mobile|false|TP-Link Archer MR600 4G+ Router
 tplink_mobile|false|TP-Link TL-MR6400 LTE Router

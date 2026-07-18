@@ -1134,21 +1134,27 @@ class RegionRoadmapPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 14),
                   Wrap(
-                    spacing: 7,
-                    runSpacing: 7,
+                    spacing: 8,
+                    runSpacing: 8,
                     children: [
                       for (final country in region.countries)
-                        Chip(
-                          label: Text(country),
-                          side: BorderSide.none,
-                          backgroundColor: const Color(0xFFF0F4F8),
-                          visualDensity: VisualDensity.compact,
-                        ),
+                        _CountryPill(country: country),
                     ],
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    region.nextStep,
+                    region.nextStepArabic,
+                    textDirection: TextDirection.rtl,
+                    style: const TextStyle(
+                      color: Color(0xFF536071),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      height: 1.35,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    region.nextStepEnglish,
                     style: const TextStyle(
                       color: Color(0xFF697487),
                       fontSize: 12,
@@ -1171,6 +1177,54 @@ class RegionRoadmapPage extends StatelessWidget {
           ),
         ),
       ],
+    ),
+  );
+}
+
+class _CountryPill extends StatelessWidget {
+  const _CountryPill({required this.country});
+
+  final ArabicCountry country;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    container: true,
+    label: '${country.englishName}, ${country.arabicName}, coming soon',
+    child: Container(
+      constraints: const BoxConstraints(minWidth: 108, maxWidth: 205),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF0F4F8),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            country.arabicName,
+            textDirection: TextDirection.rtl,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Color(0xFF213247),
+              fontWeight: FontWeight.w800,
+              height: 1.25,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            country.englishName,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Color(0xFF697487),
+              fontSize: 11,
+              height: 1.2,
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }

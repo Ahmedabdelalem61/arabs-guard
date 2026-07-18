@@ -9,7 +9,7 @@ P0-07|zte_mifi|WE and e& mobile broadband|ZTE MF937 / MF971R / MF927U|hardware_c
 P0-08|huawei_mobile_cpe|WE Vodafone Orange and e& mobile broadband|Huawei B310 / B315 / B525 / B535 / B612 / B818 / H112 / H122 / H155|hardware_capture_required|Branch-specific LAN DHCP and read-back contract
 P0-09|zte_legacy|WE and Orange legacy fixed broadband|ZTE ZXHN H168N / H108N|hardware_capture_required|Legacy WAN DNS contract with rollback evidence
 P0-10|huawei_legacy|Egyptian legacy fixed broadband|Huawei DG8045 / HG633 / HG630 / HG531 / HG532|hardware_capture_required|Legacy WAN DHCP and filter contract
-P0-11|tplink_dsl|Egyptian retail DSL|TP-Link TD-W9950 / W9960 / W9970 / Archer VR / Deco DSL|hardware_capture_required|Hardware-version and firmware-specific emulator plus device read-back
+P0-11|tplink_dsl|Egyptian retail DSL|TP-Link TD-W8961N / W9950 / W9960 / W9970 / Archer VR / Deco DSL|hardware_capture_required|Hardware-version and firmware-specific emulator plus device read-back
 P0-12|tplink_mobile|Egyptian retail and e& mobile broadband|TP-Link Archer MR / TL-MR6400|hardware_capture_required|Hardware-version LTE DNS and reconnect contract
 P0-13|dlink_dsl|Egyptian retail DSL|D-Link DSL-224 / DSL-245GE / DSL-2877 / DSL-2888|hardware_capture_required|Egypt firmware WAN DNS and rollback contract
 P0-14|nokia_home|WE mesh and Egyptian fiber|Nokia Beacon B1.1 / G-240|hardware_capture_required|Mesh upstream versus ONT ownership boundary
