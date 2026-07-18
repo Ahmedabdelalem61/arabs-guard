@@ -27,7 +27,7 @@ This list is ordered by release risk. A lower priority must not displace an unfi
 
 ## P1 — Arabic-world expansion
 
-- [x] Add a modern, bilingual “Coming soon” experience covering all 22 Arab League countries in four validation regions.
+- [x] Add a modern, bilingual “Coming soon” experience covering all 22 Arab League countries in four validation regions, with Arabic/English country names and validation steps.
 - [x] Clearly distinguish roadmap scope from verified compatibility.
 - [ ] Recruit firmware-capture testers market by market, beginning with Gulf and Levant providers, then Maghreb and Horn of Africa markets.
 - [ ] Publish a provider/model/firmware evidence table per country before enabling any automatic adapter.
