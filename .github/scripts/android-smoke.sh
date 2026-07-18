@@ -146,7 +146,8 @@ if ! timeout --foreground 300s adb shell am instrument -w -r "$instrumentation_n
   exit 1
 fi
 
-if ! grep -Eq '^OK \([1-9][0-9]* tests?\)$' "$results_dir/instrumentation.txt"; then
+if ! grep -Eq '^[[:space:]]*OK \([1-9][0-9]* tests?\)[[:space:]]*$' \
+  "$results_dir/instrumentation.txt"; then
   echo "Android instrumentation suite did not report a clean pass on API $expected_api." >&2
   exit 1
 fi

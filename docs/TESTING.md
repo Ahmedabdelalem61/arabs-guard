@@ -18,9 +18,11 @@ Arabs Guard treats compatibility as a release gate, not a sample-device claim. T
 
 Pure JVM tests cover every native router-fingerprint family, specific-before-generic matching, and fail-closed handling for unknown firmware.
 
+Before any emulator starts, a package gate verifies both APK archives, Flutter application libraries for `armeabi-v7a`, `arm64-v8a`, and `x86_64`, and the instrumentation runner's tracing, lifecycle, registry, and contract-test classes. A stripped or incomplete test runtime therefore fails once in the build job instead of wasting the entire emulator matrix.
+
 ## Every-API device layer
 
-GitHub Actions builds the release APK and release-targeting instrumentation APK once, then fans them out to every runtime API from 24 through 37. APIs 24–36 use lightweight AOSP x86_64 images. The official Android 17 repository currently provides API 37.0 x86_64 as a Google APIs 16 KB-page image, so that hosted-only job uses `google_apis_ps16k` and additionally checks native-library compatibility with the newer page size. Each API job:
+GitHub Actions builds the release APK and release-targeting instrumentation APK once, then fans them out to every runtime API from 24 through 37. APIs 24–36 use lightweight AOSP x86_64 images. The official Android 17 repository currently provides API 37.0 x86_64 as a Google APIs 16 KB-page image, so that hosted-only job keeps the compile/runtime platform at API 37 while selecting system-image API `37.0` and target `google_apis_ps16k`. This also checks native-library compatibility with the newer page size. Each API job:
 
 1. Enables KVM on the hosted runner and verifies the emulator reports the exact matrix API.
 2. Installs the release APK and Android test APK with bounded retries.
@@ -34,7 +36,7 @@ GitHub Actions builds the release APK and release-targeting instrumentation APK 
 5. Requires an `OK (5 tests)` instrumentation result, not merely a zero shell exit.
 6. Uploads instrumentation output, runtime identity, package dump, device properties, and logcat as API-specific evidence.
 
-Every ADB operation has a hard timeout, recovery is bounded, the job has a ceiling, and the matrix uses `fail-fast: false` so one failure does not hide results from other versions.
+Every ADB operation has a hard timeout, recovery is bounded, the job has a ceiling, and the matrix uses `fail-fast: false` so one failure does not hide results from other versions. Build dependencies are cached, evidence expires after seven days, and documentation-only pushes do not start the expensive emulator matrix; it remains available through manual dispatch.
 
 ## Android 17 scope
 
