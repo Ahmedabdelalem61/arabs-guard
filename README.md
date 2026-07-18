@@ -46,7 +46,7 @@ Requirements:
 flutter pub get
 flutter analyze
 flutter test
-android/gradlew -p android :app:testDebugUnitTest
+android/gradlew -p android :app:testReleaseUnitTest
 flutter build apk --debug
 ```
 

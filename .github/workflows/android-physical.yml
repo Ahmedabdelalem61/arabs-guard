@@ -36,6 +36,8 @@ jobs:
           "$sdkmanager_bin" 'platforms;android-37.0' 'build-tools;37.0.0' >/dev/null
       - run: flutter analyze
       - run: flutter test
+      - run: ./gradlew :app:testReleaseUnitTest
+        working-directory: android
       - run: flutter build apk --release
       - run: ./gradlew :app:assembleReleaseAndroidTest
         working-directory: android
