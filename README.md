@@ -37,8 +37,9 @@ Router automation only accepts numeric RFC1918/link-local/loopback IPv4 addresse
 
 Requirements:
 
-- Flutter 3.41.7 or compatible stable release
-- Android SDK 37 (the hosted workflows install it; the development machine does not need an emulator)
+- Flutter 3.44.6 or compatible stable release
+- Android SDK Platform 37.0 (the hosted workflows install it; the development machine does not need an emulator)
+- Android Gradle Plugin 9.1.1 and Gradle 9.3.1, matching Android's API 37 toolchain floor
 - Java 17+
 
 ```bash

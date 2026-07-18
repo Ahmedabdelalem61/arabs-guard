@@ -20,7 +20,7 @@ jobs:
           java-version: '21'
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.41.7'
+          flutter-version: '3.44.6'
           channel: stable
           cache: true
       - run: flutter pub get
@@ -29,7 +29,7 @@ jobs:
           sdk_root="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
           sdkmanager_bin="$sdk_root/cmdline-tools/latest/bin/sdkmanager"
           test -x "$sdkmanager_bin"
-          "$sdkmanager_bin" 'platforms;android-37' 'build-tools;37.0.0' >/dev/null
+          "$sdkmanager_bin" 'platforms;android-37.0' 'build-tools;37.0.0' >/dev/null
       - run: flutter analyze
       - run: flutter test
       - run: ./gradlew :app:testDebugUnitTest
