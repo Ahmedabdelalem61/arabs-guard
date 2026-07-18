@@ -49,5 +49,8 @@ dependencies {
     androidTestImplementation("androidx.test:core-ktx:1.7.0")
     androidTestImplementation("androidx.test.ext:junit-ktx:1.3.0")
     androidTestImplementation("androidx.test:runner:1.7.0")
+    // Keep the test runtime aligned with the app's consistently resolved
+    // AndroidX graph while making AndroidJUnitRunner's Trace class explicit.
+    androidTestImplementation("androidx.tracing:tracing:1.2.0")
     androidTestImplementation("com.google.errorprone:error_prone_annotations:2.50.0")
 }
