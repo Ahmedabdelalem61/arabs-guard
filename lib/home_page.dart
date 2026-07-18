@@ -417,6 +417,7 @@ class _SetupPageState extends State<SetupPage> {
   bool _detectingRouter = false;
   String _progress = '';
   String _routerDetectionHint = '';
+  RouterInspection? _routerInspection;
 
   bool get _usesRouter => _mode != GuardMode.device;
   bool get _usesDevice => _mode != GuardMode.router;
@@ -434,6 +435,7 @@ class _SetupPageState extends State<SetupPage> {
     setState(() {
       _detectingRouter = true;
       _routerDetectionHint = '';
+      _routerInspection = null;
     });
     try {
       final gateway = _demoMode
@@ -453,7 +455,26 @@ class _SetupPageState extends State<SetupPage> {
       _address.text = gateway;
       setState(() {
         _routerDetectionHint =
-            'Router found at $gateway. Its model and firmware will be fingerprinted before changes.';
+            'Router found at $gateway. Preparing a credential-free, read-only compatibility check…';
+      });
+      final localNetworkAllowed = _demoMode
+          ? true
+          : await GuardPlatform.requestLocalNetworkConsent();
+      if (!mounted) return;
+      if (!localNetworkAllowed) {
+        setState(() {
+          _routerDetectionHint =
+              'Router found at $gateway. Android local-network permission is needed for the optional read-only compatibility check. No settings were changed.';
+        });
+        return;
+      }
+      final inspection = _demoMode
+          ? await _demoRouterInspection()
+          : await GuardPlatform.inspectRouter(address: gateway);
+      if (!mounted) return;
+      setState(() {
+        _routerInspection = inspection;
+        _routerDetectionHint = '';
       });
     } on PlatformException {
       if (mounted) {
@@ -464,6 +485,18 @@ class _SetupPageState extends State<SetupPage> {
     } finally {
       if (mounted) setState(() => _detectingRouter = false);
     }
+  }
+
+  Future<RouterInspection> _demoRouterInspection() async {
+    await Future<void>.delayed(const Duration(milliseconds: 450));
+    return const RouterInspection(
+      detected: true,
+      model: 'Huawei DN8245V-56 (simulated)',
+      message:
+          'Compatible model recognized. Setup will re-check its authenticated page contract before any simulated change.',
+      workflow: 'huawei_dn8245v56',
+      automaticEligible: true,
+    );
   }
 
   Future<void> _apply() async {
@@ -697,6 +730,15 @@ class _SetupPageState extends State<SetupPage> {
                   : null,
             ),
             const SizedBox(height: 8),
+            const Text(
+              'The compatibility check opens only the router’s public login page. It sends no username or password and makes no settings change.',
+              style: TextStyle(
+                color: Color(0xFF697487),
+                fontSize: 12,
+                height: 1.35,
+              ),
+            ),
+            const SizedBox(height: 8),
             Align(
               alignment: Alignment.centerLeft,
               child: OutlinedButton.icon(
@@ -707,7 +749,7 @@ class _SetupPageState extends State<SetupPage> {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.wifi_find_rounded),
-                label: const Text('Auto-detect Wi-Fi router'),
+                label: const Text('Auto-detect & check compatibility'),
               ),
             ),
             if (_routerDetectionHint.isNotEmpty) ...[
@@ -721,6 +763,10 @@ class _SetupPageState extends State<SetupPage> {
                   height: 1.35,
                 ),
               ),
+            ],
+            if (_routerInspection != null) ...[
+              const SizedBox(height: 8),
+              _RouterInspectionCard(inspection: _routerInspection!),
             ],
             const SizedBox(height: 12),
             TextFormField(
@@ -921,6 +967,80 @@ class _ModeTile extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _RouterInspectionCard extends StatelessWidget {
+  const _RouterInspectionCard({required this.inspection});
+
+  final RouterInspection inspection;
+
+  @override
+  Widget build(BuildContext context) {
+    final (label, icon, foreground, background) = switch (inspection) {
+      RouterInspection(automaticEligible: true) => (
+        'Verified adapter available',
+        Icons.verified_user_rounded,
+        const Color(0xFF087A6B),
+        const Color(0xFFE4F7F2),
+      ),
+      RouterInspection(detected: true) => (
+        'Guided workflow only',
+        Icons.route_rounded,
+        const Color(0xFF8B5D00),
+        const Color(0xFFFFF3D6),
+      ),
+      _ => (
+        'Exact model not exposed',
+        Icons.shield_outlined,
+        const Color(0xFF536071),
+        const Color(0xFFF0F3F7),
+      ),
+    };
+
+    return Container(
+      key: const Key('router-inspection-result'),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: foreground),
+          const SizedBox(width: 11),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: foreground,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  inspection.model,
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  inspection.message,
+                  style: const TextStyle(
+                    color: Color(0xFF5E697A),
+                    fontSize: 12,
+                    height: 1.35,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

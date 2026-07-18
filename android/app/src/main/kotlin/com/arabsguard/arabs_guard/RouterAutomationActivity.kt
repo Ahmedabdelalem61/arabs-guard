@@ -8,11 +8,13 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.webkit.CookieManager
 import android.webkit.SslErrorHandler
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.webkit.WebStorage
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ProgressBar
@@ -41,6 +43,7 @@ class RouterAutomationActivity : Activity() {
     private var password = ""
     private var model = "Unknown router"
     private var dnsVerified = false
+    private var inspectionOnly = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,9 +51,11 @@ class RouterAutomationActivity : Activity() {
 
         username = intent.getStringExtra(EXTRA_USERNAME).orEmpty()
         password = intent.getStringExtra(EXTRA_PASSWORD).orEmpty()
+        inspectionOnly = intent.getBooleanExtra(EXTRA_INSPECTION_ONLY, false)
         val address = intent.getStringExtra(EXTRA_ADDRESS).orEmpty()
         intent.removeExtra(EXTRA_USERNAME)
         intent.removeExtra(EXTRA_PASSWORD)
+        intent.removeExtra(EXTRA_INSPECTION_ONLY)
 
         val validated = validatePrivateRouterAddress(address)
         if (validated == null) {
@@ -64,8 +69,14 @@ class RouterAutomationActivity : Activity() {
         routerUri = validated
         setContentView(buildContent())
         configureWebView()
-        status.text = "Connecting securely to your router…"
-        webView.loadUrl(routerUri.toString())
+        status.text = if (inspectionOnly) {
+            "Checking the router's public compatibility fingerprint…"
+        } else {
+            "Connecting securely to your router…"
+        }
+        clearRouterSession {
+            if (phase != Phase.FINISHED) webView.loadUrl(routerUri.toString())
+        }
     }
 
     private fun buildContent(): LinearLayout {
@@ -89,7 +100,11 @@ class RouterAutomationActivity : Activity() {
         }
         root.addView(status, linearParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 24))
         root.addView(TextView(this).apply {
-            text = "Credentials stay on this phone and are cleared after setup."
+            text = if (inspectionOnly) {
+                "Read-only check: no credentials are sent and no setting is changed."
+            } else {
+                "Credentials stay on this phone and are cleared after setup."
+            }
             textSize = 13f
             setTextColor(Color.rgb(105, 116, 135))
             gravity = Gravity.CENTER
@@ -97,12 +112,18 @@ class RouterAutomationActivity : Activity() {
         root.addView(Button(this).apply {
             text = "Cancel"
             setOnClickListener {
-                finishResult(false, "Router setup was cancelled.", "cancelled")
+                finishResult(
+                    false,
+                    if (inspectionOnly) "Router compatibility check was cancelled."
+                    else "Router setup was cancelled.",
+                    "cancelled",
+                )
             }
         }, linearParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 36))
 
         webView = WebView(this).apply {
             alpha = 0.01f
+            clearCache(true)
         }
         root.addView(webView, LinearLayout.LayoutParams(1, 1))
         return root
@@ -168,6 +189,10 @@ class RouterAutomationActivity : Activity() {
         ) { fingerprint ->
             val match = RouterSupportRegistry.detect(fingerprint)
             model = match.model
+            if (inspectionOnly) {
+                finishInspection(match)
+                return@evaluate
+            }
             when {
                 match.automatic && match.workflowId == "huawei_dn8245v56" -> {
                     status.text = "Compatible Huawei model found. Verifying its page contract…"
@@ -176,6 +201,28 @@ class RouterAutomationActivity : Activity() {
                 else -> unsupported(match.model, match.workflowId)
             }
         }
+    }
+
+    private fun finishInspection(match: RouterMatch) {
+        val recognized = match.hasDedicatedWorkflow
+        val message = when {
+            recognized && match.automatic ->
+                "A compatible model was recognized from its public login page. " +
+                    "The verified adapter will still re-check authenticated page structure before any change."
+            recognized ->
+                "A model-specific workflow was recognized from the public login page. " +
+                    "Automatic changes remain disabled until this firmware is hardware-validated."
+            else ->
+                "The router responded, but its public login page did not reveal an exact supported model. " +
+                    "No credentials were used and no settings were changed."
+        }
+        finishResult(
+            ok = recognized,
+            message = message,
+            workflow = match.workflowId,
+            detected = recognized,
+            automaticEligible = recognized && match.automatic,
+        )
     }
 
     private fun submitHuaweiLogin() {
@@ -469,7 +516,13 @@ class RouterAutomationActivity : Activity() {
             (numbers[0] == 192 && numbers[1] == 168)
     }
 
-    private fun finishResult(ok: Boolean, message: String, workflow: String) {
+    private fun finishResult(
+        ok: Boolean,
+        message: String,
+        workflow: String,
+        detected: Boolean = false,
+        automaticEligible: Boolean = false,
+    ) {
         if (phase == Phase.FINISHED) return
         phase = Phase.FINISHED
         username = ""
@@ -479,6 +532,8 @@ class RouterAutomationActivity : Activity() {
             putExtra("model", model)
             putExtra("message", message)
             putExtra("workflow", workflow)
+            putExtra("detected", detected)
+            putExtra("automaticEligible", automaticEligible)
         }
         setResult(if (ok) RESULT_OK else RESULT_CANCELED, result)
         finish()
@@ -489,16 +544,31 @@ class RouterAutomationActivity : Activity() {
         password = ""
         if (::webView.isInitialized) {
             webView.stopLoading()
+            webView.clearCache(true)
+            webView.clearFormData()
             webView.clearHistory()
             webView.removeAllViews()
             webView.destroy()
         }
+        WebStorage.getInstance().deleteAllData()
+        CookieManager.getInstance().removeAllCookies(null)
+        CookieManager.getInstance().flush()
         super.onDestroy()
+    }
+
+    private fun clearRouterSession(onCleared: () -> Unit) {
+        WebStorage.getInstance().deleteAllData()
+        val cookies = CookieManager.getInstance()
+        cookies.removeAllCookies {
+            cookies.flush()
+            onCleared()
+        }
     }
 
     companion object {
         const val EXTRA_ADDRESS = "router_address"
         const val EXTRA_USERNAME = "router_username"
         const val EXTRA_PASSWORD = "router_password"
+        const val EXTRA_INSPECTION_ONLY = "router_inspection_only"
     }
 }

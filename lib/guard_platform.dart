@@ -22,6 +22,33 @@ class RouterResult {
   final String workflow;
 }
 
+class RouterInspection {
+  const RouterInspection({
+    required this.detected,
+    required this.model,
+    required this.message,
+    required this.workflow,
+    required this.automaticEligible,
+  });
+
+  factory RouterInspection.fromMap(Map<Object?, Object?> value) =>
+      RouterInspection(
+        detected: value['detected'] == true,
+        model: value['model']?.toString() ?? 'Unknown router',
+        message:
+            value['message']?.toString() ??
+            'No inspection result was returned.',
+        workflow: value['workflow']?.toString() ?? 'unknown',
+        automaticEligible: value['automaticEligible'] == true,
+      );
+
+  final bool detected;
+  final String model;
+  final String message;
+  final String workflow;
+  final bool automaticEligible;
+}
+
 class GuardPlatform {
   static const _channel = MethodChannel('com.arabsguard.guard/control');
 
@@ -55,6 +82,16 @@ class GuardPlatform {
   static Future<String?> detectRouterGateway() async {
     if (!_isAndroid) return null;
     return _channel.invokeMethod<String>('detectRouterGateway');
+  }
+
+  static Future<RouterInspection> inspectRouter({
+    required String address,
+  }) async {
+    final result = await _channel.invokeMapMethod<Object?, Object?>(
+      'inspectRouter',
+      <String, Object?>{'address': address},
+    );
+    return RouterInspection.fromMap(result ?? const <Object?, Object?>{});
   }
 
   static Future<void> openVpnSettings() async {

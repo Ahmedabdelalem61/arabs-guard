@@ -42,19 +42,30 @@ void main() {
 
   const channel = MethodChannel('com.arabsguard.guard/control');
   late List<String> nativeCalls;
+  late List<MethodCall> platformCalls;
   late bool localNetworkAllowed;
 
   setUp(() {
     GuardPlatform.debugAndroidOverride = true;
     nativeCalls = <String>[];
+    platformCalls = <MethodCall>[];
     localNetworkAllowed = true;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
           nativeCalls.add(call.method);
+          platformCalls.add(call);
           return switch (call.method) {
             'vpnStatus' => false,
             'prepareLocalNetwork' => localNetworkAllowed,
             'detectRouterGateway' => '192.168.8.1',
+            'inspectRouter' => <String, Object?>{
+              'detected': true,
+              'model': 'Huawei DN8245V-56 (test fixture)',
+              'message':
+                  'Compatible model recognized without credentials or changes.',
+              'workflow': 'huawei_dn8245v56',
+              'automaticEligible': true,
+            },
             'configureRouter' => <String, Object?>{
               'ok': true,
               'model': 'Huawei DN8245V-56 (test fixture)',
@@ -83,7 +94,7 @@ void main() {
     expect(find.text('A calmer internet starts here'), findsOneWidget);
   });
 
-  testWidgets('offers permission-light router auto detection', (
+  testWidgets('offers a credential-free read-only compatibility scan', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(const ArabsGuardApp());
@@ -91,18 +102,69 @@ void main() {
     await tester.tap(find.text('Set up protection'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Auto-detect Wi-Fi router'), findsOneWidget);
-    await tester.tap(find.text('Auto-detect Wi-Fi router'));
-    await tester.pumpAndSettle();
-
     await tester.scrollUntilVisible(
-      find.byKey(const Key('router-detection-hint')),
+      find.text('Auto-detect & check compatibility'),
       200,
       scrollable: find.byType(Scrollable).first,
     );
-    expect(find.textContaining('Router found at 192.168.8.1'), findsOneWidget);
-    expect(nativeCalls, contains('detectRouterGateway'));
+    expect(find.text('Auto-detect & check compatibility'), findsOneWidget);
+    await tester.tap(find.text('Auto-detect & check compatibility'));
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('router-inspection-result')),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('Verified adapter available'), findsOneWidget);
+    expect(find.textContaining('Huawei DN8245V-56'), findsOneWidget);
+    expect(
+      nativeCalls,
+      containsAllInOrder(<String>[
+        'detectRouterGateway',
+        'prepareLocalNetwork',
+        'inspectRouter',
+      ]),
+    );
+    final inspectionCall = platformCalls.singleWhere(
+      (call) => call.method == 'inspectRouter',
+    );
+    expect(inspectionCall.arguments, <String, Object?>{
+      'address': '192.168.8.1',
+    });
   });
+
+  testWidgets(
+    'gateway detection stops before inspection when permission is denied',
+    (WidgetTester tester) async {
+      localNetworkAllowed = false;
+      await tester.pumpWidget(const ArabsGuardApp());
+      await tester.pump();
+      await tester.tap(find.text('Set up protection'));
+      await tester.pumpAndSettle();
+
+      await tester.scrollUntilVisible(
+        find.text('Auto-detect & check compatibility'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.tap(find.text('Auto-detect & check compatibility'));
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('router-detection-hint')),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+
+      expect(
+        find.textContaining('Router found at 192.168.8.1'),
+        findsOneWidget,
+      );
+      expect(find.textContaining('No settings were changed'), findsOneWidget);
+      expect(nativeCalls, contains('prepareLocalNetwork'));
+      expect(nativeCalls, isNot(contains('inspectRouter')));
+    },
+  );
 
   testWidgets('completes router-only protection with explicit consent', (
     WidgetTester tester,

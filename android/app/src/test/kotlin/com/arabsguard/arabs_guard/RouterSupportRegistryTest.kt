@@ -72,6 +72,22 @@ class RouterSupportRegistryTest {
     }
 
     @Test
+    fun `read only inspection reports only dedicated workflows as recognized`() {
+        assertTrue(
+            RouterSupportRegistry.detect("Huawei DN8245V-56").hasDedicatedWorkflow,
+        )
+        assertTrue(
+            RouterSupportRegistry.detect("ZTE ZXHN H188A").hasDedicatedWorkflow,
+        )
+        assertFalse(
+            RouterSupportRegistry.detect("Generic Huawei router").hasDedicatedWorkflow,
+        )
+        assertFalse(
+            RouterSupportRegistry.detect("Unrecognized login page").hasDedicatedWorkflow,
+        )
+    }
+
+    @Test
     fun `canonical matrix covers every dedicated Egyptian workflow`() {
         val expected = setOf(
             "huawei_dn8245v56",

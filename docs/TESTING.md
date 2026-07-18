@@ -9,7 +9,7 @@ For catalog, UI, or documentation changes that do not alter the Android runtime,
 `flutter test` covers:
 
 - Home protection entry points and modern roadmap UI.
-- Permission-light gateway auto-detection through a mocked Android channel.
+- Gateway auto-detection followed by a credential-free, read-only compatibility inspection through a mocked Android channel; the test verifies ordered consent, address-only inspection arguments, recognized output, and that denial prevents the page request.
 - Router-only setup with credentials and explicit owner consent.
 - Device-only setup with VPN disclosure and Android consent/start calls.
 - Combined router-and-device setup in the required order.
@@ -18,7 +18,7 @@ For catalog, UI, or documentation changes that do not alter the Android runtime,
 - Arabic-world roadmap navigation and exact, unique coverage of all 22 Arab League countries.
 - Egyptian router catalog model/provider assertions, one-to-one workflow-ID parity across the native fingerprint matrix and prioritized evidence queue, and the invariant that every automatic adapter has a secret-free structural contract fixture.
 
-Pure JVM tests load the same canonical Egyptian fixture matrix, cover multiple real-world page fingerprints for every native router workflow, normalize common Unicode page punctuation, enforce specific-before-generic matching, reject near-match automatic-write false positives, and fail closed for unknown firmware.
+Pure JVM tests load the same canonical Egyptian fixture matrix, cover multiple real-world page fingerprints for every native router workflow, normalize common Unicode page punctuation, enforce specific-before-generic matching, reject near-match automatic-write false positives, and fail closed for unknown firmware. They also prove that public-page inspection reports only dedicated model/family workflows as recognized; generic vendor and unknown markers remain unrecognized.
 
 Before any emulator starts, a package gate verifies both APK archives, Flutter application libraries for `armeabi-v7a`, `arm64-v8a`, and `x86_64`, and actual DEX class definitions for the instrumentation runner, tracing runtime, lifecycle, registry, and contract tests. It does not accept a mere class-reference string. A stripped or incomplete runtime therefore fails once in the build job instead of wasting the entire emulator matrix.
 

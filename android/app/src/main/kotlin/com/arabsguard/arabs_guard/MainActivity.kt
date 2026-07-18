@@ -19,6 +19,7 @@ class MainActivity : FlutterActivity() {
     private var pendingVpnResult: MethodChannel.Result? = null
     private var pendingLocalNetworkResult: MethodChannel.Result? = null
     private var pendingRouterResult: MethodChannel.Result? = null
+    private var pendingRouterInspectionResult: MethodChannel.Result? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -32,6 +33,10 @@ class MainActivity : FlutterActivity() {
                 "vpnStatus" -> result.success(GuardVpnService.isRunning)
                 "prepareLocalNetwork" -> prepareLocalNetwork(result)
                 "detectRouterGateway" -> detectRouterGateway(result)
+                "inspectRouter" -> inspectRouter(
+                    call.argument<String>("address")?.trim().orEmpty(),
+                    result,
+                )
                 "openVpnSettings" -> {
                     startActivity(Intent(Settings.ACTION_VPN_SETTINGS))
                     result.success(null)
@@ -48,7 +53,7 @@ class MainActivity : FlutterActivity() {
                             "Allow Nearby devices access before connecting to the router.",
                             null,
                         )
-                    } else if (pendingRouterResult != null) {
+                    } else if (routerOperationBusy()) {
                         result.error("setup_busy", "A router setup is already running.", null)
                     } else {
                         pendingRouterResult = result
@@ -57,6 +62,7 @@ class MainActivity : FlutterActivity() {
                                 putExtra(RouterAutomationActivity.EXTRA_ADDRESS, address)
                                 putExtra(RouterAutomationActivity.EXTRA_USERNAME, username)
                                 putExtra(RouterAutomationActivity.EXTRA_PASSWORD, password)
+                                putExtra(RouterAutomationActivity.EXTRA_INSPECTION_ONLY, false)
                             },
                             REQUEST_ROUTER,
                         )
@@ -126,6 +132,32 @@ class MainActivity : FlutterActivity() {
         result.success(gateway)
     }
 
+    private fun inspectRouter(address: String, result: MethodChannel.Result) {
+        if (address.isBlank()) {
+            result.error("missing_address", "A router address is required.", null)
+        } else if (!hasLocalNetworkAccess()) {
+            result.error(
+                "local_network_permission_required",
+                "Allow Nearby devices access before inspecting the router.",
+                null,
+            )
+        } else if (routerOperationBusy()) {
+            result.error("setup_busy", "A router operation is already running.", null)
+        } else {
+            pendingRouterInspectionResult = result
+            startActivityForResult(
+                Intent(this, RouterAutomationActivity::class.java).apply {
+                    putExtra(RouterAutomationActivity.EXTRA_ADDRESS, address)
+                    putExtra(RouterAutomationActivity.EXTRA_INSPECTION_ONLY, true)
+                },
+                REQUEST_ROUTER_INSPECTION,
+            )
+        }
+    }
+
+    private fun routerOperationBusy(): Boolean =
+        pendingRouterResult != null || pendingRouterInspectionResult != null
+
     private fun startVpn(result: MethodChannel.Result) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
@@ -158,6 +190,22 @@ class MainActivity : FlutterActivity() {
                 pendingRouterResult?.success(payload)
                 pendingRouterResult = null
             }
+            REQUEST_ROUTER_INSPECTION -> {
+                val payload = hashMapOf<String, Any>(
+                    "detected" to (data?.getBooleanExtra("detected", false) == true),
+                    "model" to (data?.getStringExtra("model") ?: "Unknown router"),
+                    "message" to (
+                        data?.getStringExtra("message")
+                            ?: "The read-only router check was cancelled."
+                    ),
+                    "workflow" to (data?.getStringExtra("workflow") ?: "unknown"),
+                    "automaticEligible" to (
+                        data?.getBooleanExtra("automaticEligible", false) == true
+                    ),
+                )
+                pendingRouterInspectionResult?.success(payload)
+                pendingRouterInspectionResult = null
+            }
         }
     }
 
@@ -181,5 +229,6 @@ class MainActivity : FlutterActivity() {
         private const val REQUEST_ROUTER = 4102
         private const val REQUEST_NOTIFICATIONS = 4103
         private const val REQUEST_LOCAL_NETWORK = 4104
+        private const val REQUEST_ROUTER_INSPECTION = 4105
     }
 }

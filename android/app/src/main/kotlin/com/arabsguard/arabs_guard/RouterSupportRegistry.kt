@@ -4,7 +4,10 @@ internal data class RouterMatch(
     val model: String,
     val workflowId: String,
     val automatic: Boolean = false,
-)
+) {
+    val hasDedicatedWorkflow: Boolean
+        get() = workflowId != "unknown" && !workflowId.endsWith("_unknown")
+}
 
 /**
  * Side-effect-free router fingerprinting shared by the WebView automation and

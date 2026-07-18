@@ -1,6 +1,6 @@
 # Egyptian router support
 
-Router firmware is identified before any configuration request. Arabs Guard uses a dedicated workflow per vendor/model/firmware family and stops when the fingerprint is unknown.
+After gateway detection, the user can start a credential-free, read-only compatibility check. It opens only the numeric private router's public login page and looks at a bounded title/text fingerprint; it sends no username or password and changes no setting. Many routers deliberately hide their exact model until sign-in, so an unknown result is expected and is not treated as support. During setup, Arabs Guard fingerprints again and uses a dedicated workflow per vendor/model/firmware family, stopping whenever the model, firmware, or page contract is unknown.
 
 | Egyptian provider/use | Model family | Workflow | Release status |
 |---|---|---|---|
@@ -37,6 +37,7 @@ The model string alone never proves page compatibility. If the required login fu
 ## Regression coverage
 
 - A shared canonical fixture matrix contains representative, noisy router-page fingerprints for every dedicated Egyptian workflow. Pure JVM tests exercise every fixture and ensure only the exact model assigned to the fail-closed adapter can enter its automatic path.
+- Inspection regression tests ensure dedicated catalog matches are distinguishable from generic vendor fallbacks, so a page that says only Huawei, ZTE, TP-Link, D-Link, or Nokia is not presented as an exact supported model.
 - Flutter catalog tests require a one-to-one workflow-ID match with that native fixture matrix, preventing the UI catalog and Android detector from silently drifting apart.
 - The Huawei adapter is idempotent and verifies WAN DNS and firewall state after each write before reporting success.
 - A machine-readable validation queue must contain exactly one entry for every catalog workflow, and every automatic entry must have a sanitized structural contract fixture. See [ROUTER_CAPTURE_PROTOCOL.md](ROUTER_CAPTURE_PROTOCOL.md).

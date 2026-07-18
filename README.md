@@ -5,7 +5,7 @@ Arabs Guard is a consent-driven Android app for family-safe DNS protection on a 
 ## What works in this release
 
 - Three modes: router, this Android phone, or both.
-- Auto-detection of the current Wi-Fi/Ethernet gateway, followed by model and firmware fingerprinting before router changes.
+- Auto-detection of the current Wi-Fi/Ethernet gateway plus an optional credential-free, read-only compatibility check of the router's public login page. Exact model markers are reported when exposed; setup re-checks the authenticated page contract before any change.
 - Android DNS-only `VpnService` with prominent disclosure and the Android system consent dialog.
 - DNS queries are forwarded over DNS-over-HTTPS to the CleanBrowsing Family Filter.
 - Huawei DN8245V-56 firmware adapter for WAN DNS plus an outbound TCP/UDP 53 and 853 bypass rule.
@@ -29,7 +29,7 @@ See [docs/ROUTER_SUPPORT.md](docs/ROUTER_SUPPORT.md), the auditable [docs/TESTIN
 
 ## Privacy and security
 
-See [PRIVACY.md](PRIVACY.md). Router credentials remain in memory only during setup, are removed from the Android activity intent immediately, and are never saved, logged, or uploaded. The app has no analytics SDK.
+See [PRIVACY.md](PRIVACY.md). The optional compatibility check sends no credentials and clears its isolated router WebView session. Router credentials remain in memory only during setup, are removed from the Android activity intent immediately, and are never saved, logged, or uploaded. The app has no analytics SDK.
 
 Router automation only accepts numeric RFC1918/link-local/loopback IPv4 addresses. A self-signed certificate is accepted only for the exact private router host supplied by the user; public hosts and cross-host navigation are rejected.
 
@@ -68,9 +68,9 @@ flutter pub run flutter_launcher_icons
 - `BIND_VPN_SERVICE`: enforced by Android on the DNS VPN service.
 - foreground-service permissions: required to keep a user-visible VPN alive on modern Android.
 - `POST_NOTIFICATIONS`: protection-status notification on Android 13+.
-- `ACCESS_LOCAL_NETWORK`: Android 17+ runtime permission used only when the user chooses router protection.
+- `ACCESS_LOCAL_NETWORK`: Android 17+ runtime permission used only when the user chooses the optional router compatibility check or router protection.
 
-The app targets SDK 37. Before router access on Android 17+, it presents a purpose-specific disclosure and then requests Android's `ACCESS_LOCAL_NETWORK` permission. Denial stops the router workflow before credentials or network requests are sent. Android 7–16 do not show this new prompt.
+The app targets SDK 37. Before the optional compatibility check or router setup on Android 17+, it presents a purpose-specific disclosure and then requests Android's `ACCESS_LOCAL_NETWORK` permission. Denial stops the requested router operation before credentials or router-page requests are sent. Android 7–16 do not show this new prompt.
 
 The minimum supported version is Android 7.0 (API 24), which is the floor of the current Flutter SDK. The hosted compatibility workflow has passed every runtime API from 24 through 36 using lightweight AOSP images. Each job installs both the release app and its instrumentation APK, launches the Flutter activity, validates least-privilege components and permissions, verifies fresh-install consent contracts, and uploads API-specific evidence. The release archive is also checked for 16 KB page-size alignment. Android 17/API 37 is released, but its published emulator image still does not boot reliably with acceleration on GitHub's standard hosted runners. A manual physical-device workflow now runs the identical suite using an already-installed `adb` and downloads no emulator or AVD. No emulator image is downloaded to the development machine.
 
@@ -80,7 +80,7 @@ Future structured local data is intentionally the last priority. The privacy and
 
 Local demo APKs use the Flutter template's debug signing key. Before Play publishing, create and protect a production upload keystore, configure release signing outside Git, build an Android App Bundle, complete the Google Play `VpnService` declaration, and provide the required VPN review video and prominent-disclosure evidence.
 
-The current Android 17 evaluation build is published as the [v1.0.0-alpha.6 prerelease](https://github.com/Ahmedabdelalem61/arabs-guard/releases/tag/v1.0.0-alpha.6).
+The current Android 17 evaluation build is published as the [v1.0.0-alpha.7 prerelease](https://github.com/Ahmedabdelalem61/arabs-guard/releases/tag/v1.0.0-alpha.7).
 
 ## Support
 
