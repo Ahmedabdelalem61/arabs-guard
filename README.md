@@ -10,6 +10,7 @@ Arabs Guard is a consent-driven Android app for family-safe DNS protection on a 
 - DNS queries are forwarded over DNS-over-HTTPS to the CleanBrowsing Family Filter.
 - Huawei DN8245V-56 firmware adapter for WAN DNS plus an outbound TCP/UDP 53 and 853 bypass rule.
 - Egyptian router fingerprint catalog covering major ZTE, Huawei DSL/fiber/4G/5G, TP-Link DSL/LTE, D-Link, Nokia, Tenda, ASUS, NETGEAR, and Technicolor families.
+- Modern bilingual Arabic-world expansion roadmap covering all 22 Arab League countries without presenting unvalidated markets as supported.
 - Unsupported or changed firmware fails closed: the app does not guess admin requests.
 - WhatsApp support from the app without contact, SMS, phone, storage, or location permission.
 - `DEMO_MODE` for recordings and UI testing without changing a router or starting a VPN.
@@ -24,7 +25,7 @@ DNS filtering cannot guarantee that every objectionable page worldwide will be c
 
 ## Router support
 
-See [docs/ROUTER_SUPPORT.md](docs/ROUTER_SUPPORT.md). Automatic writes are intentionally limited to exact firmware that has been verified. The model name printed on a router is not enough because Egyptian ISP firmware varies.
+See [docs/ROUTER_SUPPORT.md](docs/ROUTER_SUPPORT.md), the auditable [docs/TESTING.md](docs/TESTING.md), and the prioritized [docs/ROADMAP.md](docs/ROADMAP.md). Automatic writes are intentionally limited to exact firmware that has been verified. The model name printed on a router is not enough because Egyptian ISP firmware varies.
 
 ## Privacy and security
 
@@ -67,9 +68,11 @@ flutter pub run flutter_launcher_icons
 - foreground-service permissions: required to keep a user-visible VPN alive on modern Android.
 - `POST_NOTIFICATIONS`: protection-status notification on Android 13+.
 
-The app targets SDK 36. Android 17 introduces the `ACCESS_LOCAL_NETWORK` runtime permission for apps targeting SDK 37+, so that permission flow must be enabled when the project moves to target 37. It is deliberately not requested while targeting 36.
+The app targets SDK 36. Android 17 introduces the `ACCESS_LOCAL_NETWORK` runtime permission for apps targeting SDK 37+, so that permission flow must be implemented and tested when the project moves to target 37. It is deliberately not requested while targeting 36, as required by Android's compatibility guidance.
 
-The minimum supported version is Android 7.0 (API 24), which is the floor of the current Flutter SDK. The hosted compatibility workflow smoke-tests the important Android behavior boundaries from API 24 through API 36; Android 17/API 37 is also exercised manually without downloading a second large local emulator image.
+The minimum supported version is Android 7.0 (API 24), which is the floor of the current Flutter SDK. The hosted compatibility workflow tests every runtime API from 24 through Android 17/API 37. APIs 24–36 use lightweight AOSP images; API 37 uses the official hosted-only Google APIs 16 KB-page image currently available for Android 17. Each job installs both the release app and its instrumentation APK, launches the Flutter activity, validates least-privilege components and permissions, verifies the fresh-install VPN-consent contract, and uploads API-specific evidence. No emulator image is downloaded to the development machine.
+
+Future structured local data is intentionally the last priority. The privacy and migration contract is documented in [docs/LOCAL_DATA_ARCHITECTURE.md](docs/LOCAL_DATA_ARCHITECTURE.md); no database dependency is included until a real user-facing feature needs durable state.
 
 ## Release signing
 

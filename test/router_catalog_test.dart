@@ -17,6 +17,7 @@ void main() {
         'H153',
         'MF971R',
         'B315',
+        'B535-932A',
         'H168N',
         'DG8045',
         'VR300/400/600',
@@ -37,5 +38,16 @@ void main() {
 
     expect(verified, hasLength(1));
     expect(verified.single.models, 'DN8245V-56');
+  });
+
+  test('catalog names all four national Egyptian provider markets', () {
+    final carriers = egyptRouterCatalog
+        .map((profile) => profile.carrier)
+        .join(' ');
+
+    expect(carriers, contains('WE'));
+    expect(carriers, contains('Vodafone'));
+    expect(carriers, contains('Orange'));
+    expect(carriers, contains('e& Egypt'));
   });
 }

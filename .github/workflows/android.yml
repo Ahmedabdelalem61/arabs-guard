@@ -1,5 +1,12 @@
 name: Android checks
 
+permissions:
+  contents: read
+
+concurrency:
+  group: android-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches: [main]
@@ -26,10 +33,16 @@ jobs:
       - run: ./gradlew :app:testDebugUnitTest
         working-directory: android
       - run: flutter build apk --release
+      - run: ./gradlew :app:assembleReleaseAndroidTest
+        working-directory: android
       - uses: actions/upload-artifact@v4
         with:
           name: arabs-guard-smoke-apk
           path: build/app/outputs/flutter-apk/app-release.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: arabs-guard-contract-tests
+          path: build/app/outputs/apk/androidTest/release/app-release-androidTest.apk
 
   android-api-smoke:
     name: Android API ${{ matrix.api-level }} smoke test
@@ -41,23 +54,38 @@ jobs:
       max-parallel: 4
       matrix:
         api-level: [24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36]
+        include:
+          - api-level: 37
+            image-api-level: '37.0'
+            image-target: google_apis_ps16k
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
           name: arabs-guard-smoke-apk
           path: artifacts
+      - uses: actions/download-artifact@v4
+        with:
+          name: arabs-guard-contract-tests
+          path: artifacts
       - name: Enable KVM acceleration
         run: sudo chmod 0666 /dev/kvm
       - uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: ${{ matrix.api-level }}
+          api-level: ${{ matrix.image-api-level || matrix.api-level }}
           arch: x86_64
-          target: default
+          target: ${{ matrix.image-target || 'default' }}
           profile: Nexus 5X
           ram-size: 4096M
           disk-size: 4096M
           heap-size: 512M
           emulator-boot-timeout: 1800
           disable-animations: true
-          script: bash .github/scripts/android-smoke.sh artifacts/app-release.apk
+          script: bash .github/scripts/android-smoke.sh artifacts/app-release.apk artifacts/app-release-androidTest.apk ${{ matrix.api-level }}
+      - name: Upload API ${{ matrix.api-level }} test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-api-${{ matrix.api-level }}-test-evidence
+          path: test-results/api-${{ matrix.api-level }}
+          if-no-files-found: warn

@@ -2,10 +2,24 @@
 set -Eeuo pipefail
 
 readonly apk_path="${1:-artifacts/app-release.apk}"
+readonly test_apk_path="${2:-artifacts/app-release-androidTest.apk}"
+readonly expected_api="${3:-unknown}"
 readonly package_name="com.arabsguard.arabs_guard"
 readonly activity_name="$package_name/.MainActivity"
+readonly instrumentation_name="$package_name.test/androidx.test.runner.AndroidJUnitRunner"
+readonly results_dir="test-results/api-$expected_api"
 readonly short_adb_timeout="20s"
 readonly install_adb_timeout="240s"
+
+collect_diagnostics() {
+  set +e
+  mkdir -p "$results_dir"
+  adb_short shell getprop > "$results_dir/device-properties.txt" 2>&1
+  adb_short shell dumpsys package "$package_name" > "$results_dir/package-dump.txt" 2>&1
+  timeout --foreground 30s adb logcat -d > "$results_dir/logcat.txt" 2>&1
+}
+
+trap collect_diagnostics EXIT
 
 adb_short() {
   timeout --foreground "$short_adb_timeout" adb "$@"
@@ -57,6 +71,16 @@ if ! wait_for_android_services; then
   exit 1
 fi
 
+mkdir -p "$results_dir"
+actual_api="$(adb_short shell getprop ro.build.version.sdk 2>/dev/null || true)"
+actual_api="${actual_api//$'\r'/}"
+printf 'expected_api=%s\nactual_api=%s\n' "$expected_api" "$actual_api" \
+  > "$results_dir/runtime.txt"
+if [[ "$actual_api" != "$expected_api" ]]; then
+  echo "Expected Android API $expected_api but emulator reports $actual_api." >&2
+  exit 1
+fi
+
 install_ready=false
 for attempt in $(seq 1 3); do
   if timeout --foreground "$install_adb_timeout" adb install -r "$apk_path"; then
@@ -70,6 +94,19 @@ for attempt in $(seq 1 3); do
   sleep 10
 done
 test "$install_ready" = true
+
+test_install_ready=false
+for attempt in $(seq 1 3); do
+  if timeout --foreground "$install_adb_timeout" adb install -r "$test_apk_path"; then
+    test_install_ready=true
+    break
+  fi
+
+  echo "Instrumentation APK install attempt $attempt failed; retrying after ADB recovery." >&2
+  wait_for_device || true
+  sleep 10
+done
+test "$test_install_ready" = true
 
 package_ready=false
 for attempt in $(seq 1 12); do
@@ -102,3 +139,14 @@ for attempt in $(seq 1 18); do
   sleep 5
 done
 test "$activity_ready" = true
+
+if ! timeout --foreground 300s adb shell am instrument -w -r "$instrumentation_name" \
+  | tee "$results_dir/instrumentation.txt"; then
+  echo "Android instrumentation command failed on API $expected_api." >&2
+  exit 1
+fi
+
+if ! grep -Eq '^OK \([1-9][0-9]* tests?\)$' "$results_dir/instrumentation.txt"; then
+  echo "Android instrumentation suite did not report a clean pass on API $expected_api." >&2
+  exit 1
+fi

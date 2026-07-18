@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'guard_platform.dart';
+import 'region_roadmap.dart';
 import 'router_catalog.dart';
 
 const _demoMode = bool.fromEnvironment('DEMO_MODE');
@@ -129,6 +130,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(height: 12),
                 OutlinedButton.icon(
+                  key: const Key('egypt-router-catalog'),
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (_) => const RouterCatalogPage(),
@@ -143,6 +145,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 14),
+                const _RegionalExpansionCard(),
                 const SizedBox(height: 22),
                 const _PrivacyNote(),
                 if (_demoMode) ...[
@@ -304,6 +308,77 @@ class _PrivacyNote extends StatelessWidget {
           ),
         ),
       ],
+    ),
+  );
+}
+
+class _RegionalExpansionCard extends StatelessWidget {
+  const _RegionalExpansionCard();
+
+  @override
+  Widget build(BuildContext context) => Material(
+    color: Colors.transparent,
+    child: InkWell(
+      key: const Key('arabic-regions-coming-soon'),
+      onTap: () => Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (_) => const RegionRoadmapPage())),
+      borderRadius: BorderRadius.circular(24),
+      child: Ink(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF102C50), Color(0xFF0B6D72)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 54,
+              height: 54,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: .12),
+                borderRadius: BorderRadius.circular(17),
+              ),
+              child: const Icon(
+                Icons.public_rounded,
+                color: Colors.white,
+                size: 30,
+              ),
+            ),
+            const SizedBox(width: 16),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Coming soon · قريباً',
+                    style: TextStyle(color: _gold, fontWeight: FontWeight.w800),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    'Arabic-world router coverage',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'A transparent 22-country validation roadmap',
+                    style: TextStyle(color: Color(0xFFC9E4E3), height: 1.35),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.arrow_forward_rounded, color: Colors.white),
+          ],
+        ),
+      ),
     ),
   );
 }
@@ -594,6 +669,7 @@ class _SetupPageState extends State<SetupPage> {
             const Text('Connect this phone to the router Wi-Fi first.'),
             const SizedBox(height: 14),
             TextFormField(
+              key: const Key('router-address-field'),
               controller: _address,
               enabled: !_busy,
               keyboardType: TextInputType.url,
@@ -622,6 +698,7 @@ class _SetupPageState extends State<SetupPage> {
             if (_routerDetectionHint.isNotEmpty) ...[
               const SizedBox(height: 6),
               Text(
+                key: const Key('router-detection-hint'),
                 _routerDetectionHint,
                 style: const TextStyle(
                   color: _teal,
@@ -632,6 +709,7 @@ class _SetupPageState extends State<SetupPage> {
             ],
             const SizedBox(height: 12),
             TextFormField(
+              key: const Key('router-username-field'),
               controller: _username,
               enabled: !_busy,
               autofillHints: const [AutofillHints.username],
@@ -645,6 +723,7 @@ class _SetupPageState extends State<SetupPage> {
             ),
             const SizedBox(height: 12),
             TextFormField(
+              key: const Key('router-password-field'),
               controller: _password,
               enabled: !_busy,
               obscureText: _obscure,
@@ -669,6 +748,7 @@ class _SetupPageState extends State<SetupPage> {
             ),
             const SizedBox(height: 10),
             CheckboxListTile(
+              key: const Key('router-consent'),
               contentPadding: EdgeInsets.zero,
               value: _routerConsent,
               onChanged: _busy
@@ -695,6 +775,7 @@ class _SetupPageState extends State<SetupPage> {
               ),
             ),
             CheckboxListTile(
+              key: const Key('vpn-consent'),
               contentPadding: EdgeInsets.zero,
               value: _vpnConsent,
               onChanged: _busy
@@ -715,6 +796,7 @@ class _SetupPageState extends State<SetupPage> {
             Text(_progress, textAlign: TextAlign.center),
           ] else
             FilledButton.icon(
+              key: const Key('apply-protection'),
               onPressed: _apply,
               icon: const Icon(Icons.lock_rounded),
               label: const Text('Apply protection'),
@@ -766,6 +848,7 @@ class _ModeTile extends StatelessWidget {
       ),
     };
     return Material(
+      key: Key('guard-mode-${mode.name}'),
       color: selected ? const Color(0xFFE7F8F5) : Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -890,6 +973,149 @@ class RouterCatalogPage extends StatelessWidget {
           ),
         ),
       ],
+    ),
+  );
+}
+
+class RegionRoadmapPage extends StatelessWidget {
+  const RegionRoadmapPage({super.key});
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: const Text('Arabic-world roadmap')),
+    body: ListView(
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: const Color(0xFFEAF8F5),
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: const Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'مصر هي نقطة البداية',
+                textDirection: TextDirection.rtl,
+                style: TextStyle(
+                  color: _teal,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              SizedBox(height: 6),
+              Text(
+                'Egypt is the current validation base. Other markets stay marked “coming soon” until provider models and exact firmware are researched and tested.',
+                style: TextStyle(height: 1.45, color: Color(0xFF29433F)),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 18),
+        for (final region in arabicRegionRoadmap) ...[
+          Card(
+            elevation: 0,
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(22),
+              side: const BorderSide(color: Color(0xFFE3E8F0)),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(18),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const CircleAvatar(
+                        backgroundColor: Color(0xFFFFF4DC),
+                        foregroundColor: Color(0xFF9A6610),
+                        child: Icon(Icons.schedule_rounded),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              region.arabicName,
+                              textDirection: TextDirection.rtl,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                            Text(
+                              region.englishName,
+                              style: const TextStyle(color: Color(0xFF697487)),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const _ComingSoonBadge(),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  Wrap(
+                    spacing: 7,
+                    runSpacing: 7,
+                    children: [
+                      for (final country in region.countries)
+                        Chip(
+                          label: Text(country),
+                          side: BorderSide.none,
+                          backgroundColor: const Color(0xFFF0F4F8),
+                          visualDensity: VisualDensity.compact,
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    region.nextStep,
+                    style: const TextStyle(
+                      color: Color(0xFF697487),
+                      fontSize: 12,
+                      height: 1.35,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+        ],
+        const SizedBox(height: 8),
+        const Text(
+          'Listed countries are roadmap scope, not verified compatibility. Automatic router changes remain disabled until exact firmware behavior is captured and regression-tested.',
+          style: TextStyle(
+            color: Color(0xFF697487),
+            fontSize: 12,
+            height: 1.45,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+class _ComingSoonBadge extends StatelessWidget {
+  const _ComingSoonBadge();
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+    decoration: BoxDecoration(
+      color: const Color(0xFFFFF4DC),
+      borderRadius: BorderRadius.circular(999),
+    ),
+    child: const Text(
+      'SOON',
+      style: TextStyle(
+        color: Color(0xFF8B5B07),
+        fontSize: 10,
+        fontWeight: FontWeight.w900,
+        letterSpacing: .7,
+      ),
     ),
   );
 }

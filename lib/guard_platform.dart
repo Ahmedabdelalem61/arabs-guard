@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 class RouterResult {
@@ -26,28 +25,35 @@ class RouterResult {
 class GuardPlatform {
   static const _channel = MethodChannel('com.arabsguard.guard/control');
 
+  @visibleForTesting
+  static bool? debugAndroidOverride;
+
+  static bool get _isAndroid =>
+      debugAndroidOverride ??
+      (!kIsWeb && defaultTargetPlatform == TargetPlatform.android);
+
   static Future<bool> requestVpnConsent() async {
-    if (!Platform.isAndroid) return false;
+    if (!_isAndroid) return false;
     return await _channel.invokeMethod<bool>('prepareVpn') ?? false;
   }
 
   static Future<bool> startVpn() async {
-    if (!Platform.isAndroid) return false;
+    if (!_isAndroid) return false;
     return await _channel.invokeMethod<bool>('startVpn') ?? false;
   }
 
   static Future<bool> vpnStatus() async {
-    if (!Platform.isAndroid) return false;
+    if (!_isAndroid) return false;
     return await _channel.invokeMethod<bool>('vpnStatus') ?? false;
   }
 
   static Future<String?> detectRouterGateway() async {
-    if (!Platform.isAndroid) return null;
+    if (!_isAndroid) return null;
     return _channel.invokeMethod<String>('detectRouterGateway');
   }
 
   static Future<void> openVpnSettings() async {
-    if (Platform.isAndroid) {
+    if (_isAndroid) {
       await _channel.invokeMethod<void>('openVpnSettings');
     }
   }

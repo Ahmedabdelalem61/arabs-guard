@@ -10,10 +10,10 @@ Router firmware is identified before any configuration request. Arabs Guard uses
 | Egyptian fiber | Huawei EG8145/EG8245 and ZTE ZXHN F660/F670/F680/F673 families | Vendor-specific ONT WAN/DHCP DNS workflow | Model-specific guided profile |
 | WE Air 5G | Huawei H153 family | Huawei CPE network DNS workflow | Model-specific guided profile |
 | WE 4G/MiFi | ZTE K10, MF937, MF971R, MF927U | Mobile-router LAN/DHCP DNS workflow | Model-specific guided profile |
-| WE/Vodafone/Orange mobile broadband | Huawei B310/B315/B525/B535/B612/B818 and H112/H122/H155 families | Huawei CPE LAN/DHCP DNS workflow | Model-specific guided profile |
+| WE/Vodafone/Orange/e& Egypt mobile broadband | Huawei B310/B315/B525/B535 (including Orange-documented B535-932A)/B612/B818 and H112/H122/H155 families | Huawei CPE LAN/DHCP DNS workflow | Model-specific guided profile |
 | WE / Orange legacy | ZTE ZXHN H168N and H108N families | ZTE legacy WAN/DHCP DNS workflow by firmware revision | Model-specific guided profile |
 | Egyptian legacy ISP | Huawei DG8045, HG633, HG630, HG531/HG532 families | Huawei legacy WAN/DHCP DNS and URL-filter workflow | Model-specific guided profile |
-| Egyptian retail | TP-Link TD-W9950/W9960/W9970, Archer VR300/400/600/2100, Deco X20/X50-DSL and Archer/TL-MR mobile families | TP-Link Internet/DHCP DNS and parental-control workflow | Detection/guided fallback |
+| Egyptian retail and e& Egypt business mobile broadband | TP-Link TD-W9950/W9960/W9970, Archer VR300/400/600/2100, Deco X20/X50-DSL and Archer/TL-MR mobile families | TP-Link Internet/DHCP DNS and parental-control workflow | Detection/guided fallback |
 | Egyptian retail | D-Link DSL-224, Egypt-firmware DSL-245GE, DSL-2877/2888 families | D-Link WAN DNS and parental-control workflow | Detection/guided fallback |
 | WE mesh / Egyptian fiber | Nokia Beacon B1.1 and G-240 families | Nokia upstream-gateway or ONT DNS workflow | Detection/guided fallback |
 | Egyptian retail/legacy | Tenda V12/D301/D305, ASUS DSL, NETGEAR D6220/D6400/D7000 and Technicolor/Thomson gateways | Vendor-specific WAN or DHCP DNS workflow | Detection/guided fallback |
@@ -39,7 +39,7 @@ If the required WAN, page functions, editable DNS controls, hybrid policy, or re
 - Pure JVM fingerprint fixtures exercise every router family and ensure only the exact validated firmware can authorize automatic writes.
 - Flutter catalog tests keep the in-app compatibility list aligned with the supported fingerprint families.
 - The Huawei adapter is idempotent and verifies WAN DNS and firewall state after each write before reporting success.
-- Hosted Android emulator smoke tests cover the API levels where VPN, foreground-service, notification, and platform behavior changed. Heavy additional AVD images are not downloaded on the development machine.
+- Hosted AOSP Android jobs cover every runtime API from 24 through 37. Each runs package/activity smoke checks plus the native permission, component, lifecycle, and VPN-consent instrumentation contract. Heavy AVD images are not downloaded on the development machine. See [TESTING.md](TESTING.md).
 
 These tests prevent workflow-selection regressions; they do not turn an unobserved ISP firmware revision into a verified automatic adapter. A hardware/firmware capture is still required before enabling writes for that revision.
 
@@ -58,5 +58,7 @@ Provider catalog pages used to establish current Egyptian model families:
 - [D-Link DSL-245GE Egypt-specific firmware and manual](https://www.dlinkmea.com/index.php/product/details?det=K0RsQzFkQldYNnkxQnhUbjN6SkwwQT09)
 - [Orange Egypt Home 4G router interface guidance](https://www.orange.eg/en/help/faq-details?category=35&q=421)
 - [Vodafone Egypt Home Wireless router guidance](https://web.vodafone.com.eg/en/wireless-net)
+- [e& Egypt Office 4G lists Huawei, ZTE, and TP-Link supplied-router families](https://www.etisalat.eg/StaticFiles/portal/etisalat/pages/corporate/home-4g_en.html)
+- [Orange Egypt documentation identifies the Huawei B535-932A Home Wireless router](https://www.orange.eg/ar/Documents/Samsung-Smart-TV-Ramadan-offer-prices-en.pdf)
 
 This catalog is not a claim that these are every router ever sold in Egypt. Provider inventory and ISP firmware change, so new adapters require a firmware capture and non-destructive verification before automatic support is enabled.

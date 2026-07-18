@@ -53,16 +53,16 @@ const egyptRouterCatalog = <RouterProfile>[
     automation: RouterAutomation.guided,
   ),
   RouterProfile(
-    carrier: 'WE 4G / Egyptian mobile broadband',
+    carrier: 'WE 4G / e& Egypt business / Egyptian mobile broadband',
     vendor: 'ZTE',
     models: 'K10, MF937, MF971R, MF927U',
     workflow: 'Mobile-router LAN/DHCP DNS workflow',
     automation: RouterAutomation.guided,
   ),
   RouterProfile(
-    carrier: 'WE / Vodafone / Orange mobile broadband',
+    carrier: 'WE / Vodafone / Orange / e& Egypt mobile broadband',
     vendor: 'Huawei',
-    models: 'B310, B315, B525, B535, B612, B818, H112 / H122 / H155',
+    models: 'B310, B315, B525, B535 / B535-932A, B612, B818, H112 / H122 / H155',
     workflow: 'Huawei CPE LAN/DHCP DNS workflow by firmware branch',
     automation: RouterAutomation.guided,
   ),
@@ -88,7 +88,7 @@ const egyptRouterCatalog = <RouterProfile>[
     automation: RouterAutomation.detectOnly,
   ),
   RouterProfile(
-    carrier: 'Egypt retail mobile broadband',
+    carrier: 'Egypt retail / e& Egypt business mobile broadband',
     vendor: 'TP-Link',
     models: 'Archer MR200 / MR400 / MR500 / MR600, TL-MR6400',
     workflow: 'TP-Link LTE Internet/DHCP DNS workflow by hardware version',
