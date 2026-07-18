@@ -82,7 +82,7 @@ jobs:
   android-api-smoke:
     name: Android API ${{ matrix.api }} regression test
     needs: verify
-    runs-on: ${{ matrix.api == 37 && 'macos-15' || 'ubuntu-latest' }}
+    runs-on: ${{ matrix.api == 37 && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     timeout-minutes: ${{ matrix.api == 37 && 20 || 40 }}
     strategy:
       fail-fast: false
@@ -99,9 +99,11 @@ jobs:
         with:
           name: arabs-guard-contract-tests
           path: artifacts
-      - name: Enable KVM acceleration
+      - name: Verify KVM acceleration
         if: runner.os == 'Linux'
-        run: sudo chmod 0666 /dev/kvm
+        run: |
+          test -c /dev/kvm
+          sudo chmod 0666 /dev/kvm
       - uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api == 37 && 36 || matrix.api }}
@@ -109,8 +111,8 @@ jobs:
           arch: ${{ matrix.api == 37 && 'arm64-v8a' || 'x86_64' }}
           target: ${{ matrix.api == 37 && 'google_apis_ps16k' || 'default' }}
           profile: Nexus 5X
-          ram-size: ${{ matrix.api == 37 && '2048M' || '4096M' }}
-          disk-size: ${{ matrix.api == 37 && '2048M' || '4096M' }}
+          ram-size: 4096M
+          disk-size: 4096M
           heap-size: 512M
           emulator-boot-timeout: ${{ matrix.api == 37 && 600 || 1800 }}
           pre-emulator-launch-script: adb start-server
