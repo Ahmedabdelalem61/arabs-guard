@@ -17,6 +17,28 @@ on:
     paths-ignore:
       - '**/*.md'
   workflow_dispatch:
+    inputs:
+      api:
+        description: Android API to test, or all for the complete matrix
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - '24'
+          - '25'
+          - '26'
+          - '27'
+          - '28'
+          - '29'
+          - '30'
+          - '31'
+          - '32'
+          - '33'
+          - '34'
+          - '35'
+          - '36'
+          - '37'
 
 jobs:
   verify:
@@ -61,17 +83,12 @@ jobs:
     name: Android API ${{ matrix.api }} regression test
     needs: verify
     runs-on: ubuntu-latest
-    timeout-minutes: ${{ matrix.timeout || 40 }}
+    timeout-minutes: ${{ matrix.api == 37 && 60 || 40 }}
     strategy:
       fail-fast: false
       max-parallel: 4
       matrix:
-        api: [24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36]
-        include:
-          - api: 37
-            system_image_api: '37.0'
-            target: google_apis_ps16k
-            timeout: 60
+        api: ${{ fromJSON(github.event_name == 'workflow_dispatch' && inputs.api != 'all' && format('[{0}]', inputs.api) || '[24,25,26,27,28,29,30,31,32,33,34,35,36,37]') }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -86,10 +103,10 @@ jobs:
         run: sudo chmod 0666 /dev/kvm
       - uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: ${{ matrix.api }}
-          system-image-api-level: ${{ matrix.system_image_api || matrix.api }}
+          api-level: ${{ matrix.api == 37 && 36 || matrix.api }}
+          system-image-api-level: ${{ matrix.api == 37 && '37.0' || matrix.api }}
           arch: x86_64
-          target: ${{ matrix.target || 'default' }}
+          target: ${{ matrix.api == 37 && 'google_apis_ps16k' || 'default' }}
           profile: Nexus 5X
           ram-size: 4096M
           disk-size: 4096M
