@@ -82,7 +82,7 @@ jobs:
   android-api-smoke:
     name: Android API ${{ matrix.api }} regression test
     needs: verify
-    runs-on: ${{ matrix.api == 37 && 'macos-15-intel' || 'ubuntu-latest' }}
+    runs-on: ${{ matrix.api == 37 && 'macos-15' || 'ubuntu-latest' }}
     timeout-minutes: ${{ matrix.api == 37 && 20 || 40 }}
     strategy:
       fail-fast: false
@@ -106,11 +106,11 @@ jobs:
         with:
           api-level: ${{ matrix.api == 37 && 36 || matrix.api }}
           system-image-api-level: ${{ matrix.api == 37 && '37.1' || matrix.api }}
-          arch: x86_64
+          arch: ${{ matrix.api == 37 && 'arm64-v8a' || 'x86_64' }}
           target: ${{ matrix.api == 37 && 'google_apis_ps16k' || 'default' }}
           profile: Nexus 5X
-          ram-size: 4096M
-          disk-size: 4096M
+          ram-size: ${{ matrix.api == 37 && '2048M' || '4096M' }}
+          disk-size: ${{ matrix.api == 37 && '2048M' || '4096M' }}
           heap-size: 512M
           emulator-boot-timeout: ${{ matrix.api == 37 && 600 || 1800 }}
           pre-emulator-launch-script: adb start-server
