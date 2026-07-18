@@ -27,10 +27,20 @@ readonly dexdump_bin="$(
   find "$sdk_root/build-tools" -mindepth 2 -maxdepth 2 -type f -name dexdump \
     -print | sort -V | tail -1
 )"
+readonly zipalign_bin="$(
+  find "$sdk_root/build-tools" -mindepth 2 -maxdepth 2 -type f -name zipalign \
+    -print | sort -V | tail -1
+)"
 if [[ ! -x "$dexdump_bin" ]]; then
   echo "Android SDK dexdump was not found." >&2
   exit 1
 fi
+if [[ ! -x "$zipalign_bin" ]]; then
+  echo "Android SDK zipalign was not found." >&2
+  exit 1
+fi
+
+"$zipalign_bin" -c -P 16 4 "$app_apk"
 
 unzip -Z1 "$app_apk" > "$scratch_dir/app-entries.txt"
 for abi in armeabi-v7a arm64-v8a x86_64; do
