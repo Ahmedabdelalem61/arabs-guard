@@ -35,6 +35,7 @@ jobs:
     name: Android API ${{ matrix.api-level }} smoke test
     needs: verify
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     strategy:
       fail-fast: false
       max-parallel: 4
@@ -46,6 +47,8 @@ jobs:
         with:
           name: arabs-guard-smoke-apk
           path: artifacts
+      - name: Enable KVM acceleration
+        run: sudo chmod 0666 /dev/kvm
       - uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
