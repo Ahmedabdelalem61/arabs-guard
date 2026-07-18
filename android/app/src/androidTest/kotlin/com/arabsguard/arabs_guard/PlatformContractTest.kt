@@ -24,7 +24,9 @@ class PlatformContractTest {
 
     @Test
     fun runtimeAndPackageSdkContractIsSupported() {
-        val expectedApi = instrumentation.arguments.getString("expectedApi")?.toIntOrNull()
+        val expectedApi = InstrumentationRegistry.getArguments()
+            .getString("expectedApi")
+            ?.toIntOrNull()
         assertNotNull("the smoke runner must provide its expected API", expectedApi)
         assertEquals("runtime must match the selected test device", expectedApi, Build.VERSION.SDK_INT)
         assertTrue("runtime API must meet minSdk", Build.VERSION.SDK_INT >= 24)
