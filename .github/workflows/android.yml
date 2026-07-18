@@ -82,7 +82,7 @@ jobs:
   android-api-smoke:
     name: Android API ${{ matrix.api }} regression test
     needs: verify
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.api == 37 && 'macos-15-intel' || 'ubuntu-latest' }}
     timeout-minutes: ${{ matrix.api == 37 && 20 || 40 }}
     strategy:
       fail-fast: false
@@ -100,6 +100,7 @@ jobs:
           name: arabs-guard-contract-tests
           path: artifacts
       - name: Enable KVM acceleration
+        if: runner.os == 'Linux'
         run: sudo chmod 0666 /dev/kvm
       - uses: reactivecircus/android-emulator-runner@v2
         with:

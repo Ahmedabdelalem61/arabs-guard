@@ -8,21 +8,32 @@ readonly package_name="com.arabsguard.arabs_guard"
 readonly activity_name="$package_name/.MainActivity"
 readonly instrumentation_name="$package_name.test/androidx.test.runner.AndroidJUnitRunner"
 readonly results_dir="test-results/api-$expected_api"
-readonly short_adb_timeout="20s"
-readonly install_adb_timeout="240s"
+readonly short_adb_timeout="20"
+readonly install_adb_timeout="240"
+
+run_with_timeout() {
+  local seconds="$1"
+  shift
+
+  if command -v timeout >/dev/null 2>&1; then
+    timeout --foreground "${seconds}s" "$@"
+  else
+    perl -e 'alarm shift @ARGV; exec @ARGV' "$seconds" "$@"
+  fi
+}
 
 collect_diagnostics() {
   set +e
   mkdir -p "$results_dir"
   adb_short shell getprop > "$results_dir/device-properties.txt" 2>&1
   adb_short shell dumpsys package "$package_name" > "$results_dir/package-dump.txt" 2>&1
-  timeout --foreground 30s adb logcat -d > "$results_dir/logcat.txt" 2>&1
+  run_with_timeout 30 adb logcat -d > "$results_dir/logcat.txt" 2>&1
 }
 
 trap collect_diagnostics EXIT
 
 adb_short() {
-  timeout --foreground "$short_adb_timeout" adb "$@"
+  run_with_timeout "$short_adb_timeout" adb "$@"
 }
 
 wait_for_device() {
@@ -32,8 +43,8 @@ wait_for_device() {
     fi
 
     echo "ADB device readiness attempt $attempt failed; restarting the ADB server." >&2
-    timeout --foreground 10s adb kill-server 2>/dev/null || true
-    timeout --foreground 10s adb start-server 2>/dev/null || true
+    run_with_timeout 10 adb kill-server 2>/dev/null || true
+    run_with_timeout 10 adb start-server 2>/dev/null || true
     sleep 5
   done
 
@@ -83,7 +94,7 @@ fi
 
 install_ready=false
 for attempt in $(seq 1 3); do
-  if timeout --foreground "$install_adb_timeout" adb install -r "$apk_path"; then
+  if run_with_timeout "$install_adb_timeout" adb install -r "$apk_path"; then
     install_ready=true
     break
   fi
@@ -97,7 +108,7 @@ test "$install_ready" = true
 
 test_install_ready=false
 for attempt in $(seq 1 3); do
-  if timeout --foreground "$install_adb_timeout" adb install -r "$test_apk_path"; then
+  if run_with_timeout "$install_adb_timeout" adb install -r "$test_apk_path"; then
     test_install_ready=true
     break
   fi
@@ -140,7 +151,7 @@ for attempt in $(seq 1 18); do
 done
 test "$activity_ready" = true
 
-if ! timeout --foreground 300s adb shell am instrument -w -r \
+if ! run_with_timeout 300 adb shell am instrument -w -r \
   -e class "$package_name.PlatformContractTest" "$instrumentation_name" \
   | tee "$results_dir/instrumentation.txt"; then
   echo "Android instrumentation command failed on API $expected_api." >&2
