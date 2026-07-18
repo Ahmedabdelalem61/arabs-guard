@@ -254,6 +254,8 @@ void main() {
       find.textContaining('firewall step was not started'),
       findsOneWidget,
     );
+    expect(find.byKey(const Key('router-failure-support')), findsOneWidget);
+    expect(find.text('Send safe diagnostic'), findsOneWidget);
     expect(find.text('Protection enabled'), findsNothing);
     expect(nativeCalls, isNot(contains('prepareVpn')));
   });

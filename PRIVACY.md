@@ -24,7 +24,7 @@ CleanBrowsing operates the upstream Family Filter and applies its own service te
 
 ## WhatsApp support
 
-Choosing support opens an external `wa.me` link. WhatsApp and the device browser then operate under their own privacy policies. Arabs Guard does not read the user's contacts or WhatsApp data.
+Choosing support opens an external `wa.me` link. From a router failure dialog, the prefilled message contains only an allowlisted diagnostic code; it deliberately excludes the router address, model text, username, password, cookies, page content, and native error text. The user can review or edit the message before sending it. WhatsApp and the device browser then operate under their own privacy policies. Arabs Guard does not read the user's contacts or WhatsApp data.
 
 ## Security
 

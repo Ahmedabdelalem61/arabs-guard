@@ -23,6 +23,7 @@ This list is ordered by release risk. A lower priority must not displace an unfi
 - [x] Fail closed on unknown models, firmware, page structure, WAN selection, or verification results.
 - [x] Keep automatic writes restricted to the exact Huawei DN8245V-56 adapter already validated and regression-tested.
 - [ ] Investigate the physical DN8245V-56 field result `dns_verification_failed` without weakening read-back. Before retrying automation, manually confirm the WAN DNS state and collect a sanitized firmware/page contract; the observed run stopped before the firewall step and did not claim protection.
+- [x] Let a user forward an allowlisted router failure code to WhatsApp support while excluding the router address, model text, credentials, cookies, page content, and native error text.
 - [ ] Hardware-validation queue: ZTE H188A/H188A V2, Huawei HG8245W5-6T, Huawei B535-932A, ZTE K10/MF971R, Huawei H153, ZTE F670/F680, TP-Link TD-W8961N/VR/MR, and D-Link DSL-245GE. Each item needs a sanitized firmware/page capture and read-back test before automation can be enabled.
 - [x] Publish a secret-free capture protocol and machine-readable validation queue so new evidence can be regression-tested without collecting router credentials, cookies, addresses, SSIDs, or raw page dumps.
 - [ ] Add newly supplied ISP models only after model/firmware evidence is obtained; provider inventories change and cannot be safely inferred from branding.

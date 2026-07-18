@@ -14,6 +14,7 @@ For catalog, UI, or documentation changes that do not alter the Android runtime,
 - Device-only setup with VPN disclosure and Android consent/start calls.
 - Combined router-and-device setup in the required order.
 - Rejection when the selected layer disclosure is not accepted.
+- Field-failure guidance that does not claim protection after unconfirmed DNS read-back, plus secret-free support-URI tests that reject arbitrary native text.
 - Egyptian compatibility catalog navigation.
 - Arabic-world roadmap navigation and exact, unique coverage of all 22 Arab League countries.
 - Egyptian router catalog model/provider assertions, one-to-one workflow-ID parity across the native fingerprint matrix and prioritized evidence queue, and the invariant that every automatic adapter has a secret-free structural contract fixture.

@@ -12,7 +12,7 @@ Arabs Guard is a consent-driven Android app for family-safe DNS protection on a 
 - Egyptian router fingerprint catalog covering major ZTE, Huawei DSL/fiber/4G/5G, TP-Link DSL/LTE, D-Link, Nokia, Tenda, ASUS, NETGEAR, and Technicolor families.
 - Modern bilingual Arabic-world expansion roadmap covering all 22 Arab League countries without presenting unvalidated markets as supported.
 - Unsupported or changed firmware fails closed: the app does not guess admin requests.
-- WhatsApp support from the app without contact, SMS, phone, storage, or location permission.
+- WhatsApp support from the app without contact, SMS, phone, storage, or location permission. Router failures can prefill an allowlisted diagnostic code while excluding credentials, router addresses, cookies, page content, and raw error text.
 - `DEMO_MODE` for recordings and UI testing without changing a router or starting a VPN.
 
 ## Important boundaries
@@ -80,7 +80,7 @@ Future structured local data is intentionally the last priority. The privacy and
 
 Local demo APKs use the Flutter template's debug signing key. Before Play publishing, create and protect a production upload keystore, configure release signing outside Git, build an Android App Bundle, complete the Google Play `VpnService` declaration, and provide the required VPN review video and prominent-disclosure evidence.
 
-The current Android 17 evaluation build is published as the [v1.0.0-alpha.8 prerelease](https://github.com/Ahmedabdelalem61/arabs-guard/releases/tag/v1.0.0-alpha.8).
+The current Android 17 evaluation build is published as the [v1.0.0-alpha.9 prerelease](https://github.com/Ahmedabdelalem61/arabs-guard/releases/tag/v1.0.0-alpha.9).
 
 ## Support
 

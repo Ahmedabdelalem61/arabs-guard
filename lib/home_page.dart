@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'guard_platform.dart';
 import 'region_roadmap.dart';
 import 'router_catalog.dart';
+import 'support.dart';
 
 const _demoMode = bool.fromEnvironment('DEMO_MODE');
 const _navy = Color(0xFF06162F);
@@ -57,10 +58,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _openSupport() async {
-    final uri = Uri.parse(
-      'https://wa.me/2001011459031?text=${Uri.encodeComponent('Hello Arabs Guard support, I need help with my router.')}',
-    );
-    if (!await launchUrl(uri, mode: LaunchMode.externalApplication) &&
+    if (!await launchUrl(
+          generalSupportUri(),
+          mode: LaunchMode.externalApplication,
+        ) &&
         mounted) {
       ScaffoldMessenger.of(
         context,
@@ -633,6 +634,12 @@ class _SetupPageState extends State<SetupPage> {
       title: Text(result.model),
       content: Text('${result.message}\n\n${_routerFailureGuidance(result)}'),
       actions: [
+        TextButton.icon(
+          key: const Key('router-failure-support'),
+          onPressed: () => _openRouterFailureSupport(result),
+          icon: const Icon(Icons.support_agent_rounded),
+          label: const Text('Send safe diagnostic'),
+        ),
         TextButton(
           onPressed: () => Navigator.pop(context),
           child: const Text('Continue'),
@@ -645,6 +652,18 @@ class _SetupPageState extends State<SetupPage> {
       result.workflow == 'dns_verification_failed'
       ? 'A DNS save was attempted through the verified page contract, but read-back did not confirm the saved values. Do not assume router protection is active. The firewall step was not started; check the router’s WAN DNS page before trying again.'
       : 'No unverified commands were sent to this router.';
+
+  Future<void> _openRouterFailureSupport(RouterResult result) async {
+    if (!await launchUrl(
+          routerFailureSupportUri(result),
+          mode: LaunchMode.externalApplication,
+        ) &&
+        mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Could not open WhatsApp.')));
+    }
+  }
 
   Future<void> _showSuccess({
     required bool routerOk,
