@@ -88,7 +88,9 @@ jobs:
   android-api-smoke:
     name: Android API ${{ matrix.api }} regression test
     needs: verify
-    runs-on: ${{ matrix.api == 37 && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
+    # API 37's hosted ARM runner currently exposes no /dev/kvm. Use the
+    # KVM-capable x64 runner with the stable 37.1 x86_64 system image instead.
+    runs-on: ubuntu-latest
     timeout-minutes: ${{ matrix.api == 37 && 20 || 40 }}
     strategy:
       fail-fast: false
@@ -114,7 +116,7 @@ jobs:
         with:
           api-level: ${{ matrix.api == 37 && 36 || matrix.api }}
           system-image-api-level: ${{ matrix.api == 37 && '37.1' || matrix.api }}
-          arch: ${{ matrix.api == 37 && 'arm64-v8a' || 'x86_64' }}
+          arch: x86_64
           target: ${{ matrix.api == 37 && 'google_apis_ps16k' || 'default' }}
           profile: Nexus 5X
           ram-size: 4096M
