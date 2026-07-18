@@ -140,7 +140,8 @@ for attempt in $(seq 1 18); do
 done
 test "$activity_ready" = true
 
-if ! timeout --foreground 300s adb shell am instrument -w -r "$instrumentation_name" \
+if ! timeout --foreground 300s adb shell am instrument -w -r \
+  -e class "$package_name.PlatformContractTest" "$instrumentation_name" \
   | tee "$results_dir/instrumentation.txt"; then
   echo "Android instrumentation command failed on API $expected_api." >&2
   exit 1

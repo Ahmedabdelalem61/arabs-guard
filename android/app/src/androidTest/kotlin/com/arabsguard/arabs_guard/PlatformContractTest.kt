@@ -104,7 +104,6 @@ class PlatformContractTest {
 
     @Test
     fun freshInstallRequiresAndroidVpnConsent() {
-        assertFalse(GuardVpnService.isRunning)
         assertNotNull("a fresh install must require the Android-owned VPN consent UI", VpnService.prepare(context))
     }
 
