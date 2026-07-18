@@ -104,7 +104,7 @@ jobs:
       - uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api == 37 && 36 || matrix.api }}
-          system-image-api-level: ${{ matrix.api == 37 && '37.0' || matrix.api }}
+          system-image-api-level: ${{ matrix.api == 37 && '37.1' || matrix.api }}
           arch: x86_64
           target: ${{ matrix.api == 37 && 'google_apis_ps16k' || 'default' }}
           profile: Nexus 5X
