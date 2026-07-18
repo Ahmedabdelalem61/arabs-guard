@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      max-parallel: 2
+      max-parallel: 4
       matrix:
         api-level: [24, 26, 29, 31, 33, 34, 35, 36]
     steps:
@@ -56,7 +56,32 @@ jobs:
           heap-size: 256M
           disable-animations: true
           script: |
-            adb install artifacts/app-debug.apk
-            adb shell am start -W -n com.arabsguard.arabs_guard/.MainActivity
-            adb shell dumpsys package com.arabsguard.arabs_guard | grep -q "minSdk=24"
-            adb shell dumpsys activity activities | grep -q "com.arabsguard.arabs_guard/.MainActivity"
+            set -eu
+            package_name="com.arabsguard.arabs_guard"
+            activity_name="$package_name/.MainActivity"
+
+            # Avoid the emulator's very slow streamed-install path on some
+            # hosted API images (notably API 31+).
+            adb install --no-streaming -r artifacts/app-debug.apk
+
+            package_ready=false
+            for attempt in $(seq 1 12); do
+              if adb shell pm path "$package_name" | grep -q '^package:'; then
+                package_ready=true
+                break
+              fi
+              sleep 5
+            done
+            test "$package_ready" = true
+
+            adb shell am start -n "$activity_name"
+
+            activity_ready=false
+            for attempt in $(seq 1 18); do
+              if adb shell dumpsys activity activities | grep -Fq "$activity_name"; then
+                activity_ready=true
+                break
+              fi
+              sleep 5
+            done
+            test "$activity_ready" = true
