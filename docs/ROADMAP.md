@@ -11,6 +11,7 @@ This list is ordered by release risk. A lower priority must not displace an unfi
 - [x] Run Flutter tests for router-only, device-only, router+device validation, gateway auto-detection, catalog navigation, and the Arabic-region roadmap.
 - [x] Keep KVM acceleration, explicit ADB timeouts/recovery, per-job ceilings, and uploaded per-API diagnostics so no runner can hang indefinitely.
 - [x] Target SDK 37 and add prominent `ACCESS_LOCAL_NETWORK` consent, denial handling, defensive native enforcement, and fresh-install permission contracts.
+- [x] Make the physical API 37 runner exercise bounded denied → granted → revoked → re-granted → cleanup transitions and credential-free private-gateway reachability, with explicit app-data-reset/router-probe confirmations and secret-free evidence.
 - [ ] Certify the Android 17 permission grant, denial, settings revocation, and successful router reconnection paths on physical API 37 hardware.
 
 ## P0 — Egyptian router safety and coverage gate

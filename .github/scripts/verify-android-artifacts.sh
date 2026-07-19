@@ -97,7 +97,8 @@ for required_class in \
   'Lkotlin/collections/SetsKt;' \
   'Lorg/junit/Assert;' \
   'Lorg/junit/Test;' \
-  'Lcom/arabsguard/arabs_guard/PlatformContractTest;'; do
+  'Lcom/arabsguard/arabs_guard/PlatformContractTest;' \
+  'Lcom/arabsguard/arabs_guard/PhysicalLocalNetworkContractTest;'; do
   grep -Fq "Class descriptor  : '$required_class'" \
     "$scratch_dir/dex-definitions.txt" || {
     echo "Packaged APKs are missing required class definition: $required_class" >&2

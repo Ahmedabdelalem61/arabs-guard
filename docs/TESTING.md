@@ -35,7 +35,7 @@ GitHub Actions builds the release APK and release-targeting instrumentation APK 
    - real Flutter activity launch and resumed lifecycle;
    - non-exported credential activity, protected/non-exported VPN service, launcher export, and modern foreground-service type;
    - required-only permission surface with explicit rejection of location, camera, microphone, contacts, phone, SMS, and storage permissions;
-   - fresh-install Android 17 local-network permission denial contract;
+   - Android 17 local-network permission state contract (fresh stable-matrix runs default to denied; the physical runner supplies explicit transition expectations);
    - fresh-install Android-owned VPN consent requirement.
 5. Requires an `OK (6 tests)` instrumentation result, not merely a zero shell exit.
 6. Uploads instrumentation output, runtime identity, package dump, device properties, and logcat as API-specific evidence.
@@ -46,7 +46,9 @@ Every ADB operation has a hard timeout, recovery is bounded, the job has a ceili
 
 Android 17 is released and the app targets SDK 37. Its local-network permission path is implemented, but the project does not claim a runtime pass until the same suite completes on API 37. Current GitHub standard runners do not provide a usable emulator combination: the x86_64 image remains ADB-offline on Linux and Intel macOS, Apple Silicon reports that HVF is disabled, and Ubuntu ARM does not expose `/dev/kvm`. The emulator workflow opts out of metrics collection explicitly so a future consent prompt cannot block CI.
 
-The manual `Android physical-device certification` workflow builds on a standard hosted runner, then delegates only installation and the contract suite to a labeled self-hosted machine with one attached device. Its wrapper requires a non-emulator API match and uses an already-installed `adb`; it never installs an SDK, system image, emulator, or AVD. Physical API 37 evidence must cover the permission grant, denial, settings revocation, and successful router reconnection paths before certification is checked off.
+The manual `Android physical-device certification` workflow builds on a standard hosted runner, then delegates only installation and the contract suite to a labeled self-hosted machine with exactly one attached device. It requires two deliberate confirmations: uninstalling the existing Arabs Guard packages will erase their app data, and a credential-free private-gateway reachability probe will open only a TCP connection to port 80 or 443. Its wrapper rejects emulators and API mismatches, uses an already-installed `adb`, bounds every added ADB operation, and never installs an SDK, system image, emulator, or AVD.
+
+On API 37 the physical runner now executes and records these phases without logging the gateway address: fresh-install denial, package-manager grant, a private Wi-Fi/Ethernet gateway discovery and TCP reachability probe, package-manager revocation, re-grant, a second reachability probe proving reconnection, and a final denied cleanup state. Each permission state is asserted inside the installed target app's instrumentation process. A CI contract verifier and deterministic fake-ADB regression execute the complete transition sequence without downloads; they prevent the confirmations, state ordering, final revocation, and no-download boundary from silently disappearing. This is strong automated state-transition evidence, but certification remains unchecked until the workflow actually passes on physical API 37 hardware and the user-facing Android permission dialog is also observed for grant and denial.
 
 Official platform basis: [Android local network permission](https://developer.android.com/privacy-and-security/local-network-permission) and [Android 17 behavior changes](https://developer.android.com/about/versions/17/behavior-changes-17).
 

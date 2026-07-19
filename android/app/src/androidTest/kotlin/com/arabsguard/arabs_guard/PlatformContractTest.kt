@@ -106,11 +106,22 @@ class PlatformContractTest {
     }
 
     @Test
-    fun freshInstallRequiresAndroid17LocalNetworkConsent() {
+    fun localNetworkPermissionMatchesRunnerExpectation() {
         if (Build.VERSION.SDK_INT < 37) return
+        val expected = InstrumentationRegistry.getArguments()
+            .getString("expectedLocalNetworkPermission")
+            ?: "denied"
+        assertTrue(
+            "expectedLocalNetworkPermission must be granted or denied",
+            expected == "granted" || expected == "denied",
+        )
         assertEquals(
-            "a fresh install must not silently receive broad local-network access",
-            PackageManager.PERMISSION_DENIED,
+            "local-network permission must match the runner phase",
+            if (expected == "granted") {
+                PackageManager.PERMISSION_GRANTED
+            } else {
+                PackageManager.PERMISSION_DENIED
+            },
             context.checkSelfPermission(Manifest.permission.ACCESS_LOCAL_NETWORK),
         )
     }

@@ -8,6 +8,22 @@ on:
         required: true
         default: '37'
         type: string
+      confirm_app_data_reset:
+        description: Certification uninstalls Arabs Guard and erases its existing app data on the attached device
+        required: true
+        default: not-confirmed
+        type: choice
+        options:
+          - not-confirmed
+          - RESET-ARABS-GUARD
+      confirm_read_only_router_probe:
+        description: Authorize credential-free TCP reachability checks to the attached device's private gateway
+        required: true
+        default: not-confirmed
+        type: choice
+        options:
+          - not-confirmed
+          - READ-ONLY-ROUTER-PROBE
 
 permissions:
   contents: read
@@ -17,7 +33,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
+      - name: Validate destructive and network confirmations
+        env:
+          RESET_CONFIRMATION: ${{ inputs.confirm_app_data_reset }}
+          ROUTER_PROBE_CONFIRMATION: ${{ inputs.confirm_read_only_router_probe }}
+        run: |
+          test "$RESET_CONFIRMATION" = RESET-ARABS-GUARD
+          test "$ROUTER_PROBE_CONFIRMATION" = READ-ONLY-ROUTER-PROBE
       - uses: actions/checkout@v4
+      - name: Verify no-download physical certification contract
+        run: bash .github/scripts/verify-physical-certification.sh
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -65,6 +90,9 @@ jobs:
           name: physical-certification-apks
           path: artifacts
       - name: Certify attached physical Android device
+        env:
+          ANDROID_PHYSICAL_RESET_CONFIRMED: ${{ inputs.confirm_app_data_reset }}
+          ANDROID_PHYSICAL_ROUTER_PROBE_CONFIRMED: ${{ inputs.confirm_read_only_router_probe }}
         run: >-
           bash .github/scripts/android-physical-smoke.sh
           artifacts/app-release.apk

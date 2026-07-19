@@ -46,6 +46,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Verify no-download physical certification contract
+        run: bash .github/scripts/verify-physical-certification.sh
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
