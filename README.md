@@ -9,7 +9,7 @@ Arabs Guard is a consent-driven Android app for family-safe DNS protection on a 
 - Android DNS-only `VpnService` with prominent disclosure and the Android system consent dialog.
 - DNS queries are forwarded over DNS-over-HTTPS to the CleanBrowsing Family Filter.
 - Huawei DN8245V-56 firmware adapter for WAN DNS plus an outbound TCP/UDP 53 and 853 bypass rule.
-- Egyptian router fingerprint catalog covering major ZTE, Huawei DSL/fiber/4G/5G, TP-Link DSL/LTE, D-Link, Nokia, Tenda, ASUS, NETGEAR, and Technicolor families.
+- Egyptian router fingerprint catalog covering major ZTE, Huawei DSL/fiber/4G/5G, TP-Link DSL/LTE/MiFi/5G, D-Link DSL/LTE/MiFi, Nokia, Tenda, ASUS, NETGEAR, and Technicolor families.
 - Modern bilingual Arabic-world expansion roadmap covering all 22 Arab League countries without presenting unvalidated markets as supported.
 - Unsupported or changed firmware fails closed: the app does not guess admin requests.
 - WhatsApp support from the app without contact, SMS, phone, storage, or location permission. Router failures can prefill an allowlisted diagnostic code while excluding credentials, router addresses, cookies, page content, and raw error text.

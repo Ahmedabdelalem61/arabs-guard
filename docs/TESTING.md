@@ -17,7 +17,7 @@ For catalog, UI, or documentation changes that do not alter the Android runtime,
 - Field-failure guidance that does not claim protection after unconfirmed DNS read-back, plus secret-free support-URI tests that reject arbitrary native text.
 - Egyptian compatibility catalog navigation.
 - Arabic-world roadmap navigation and exact, unique coverage of all 22 Arab League countries.
-- Egyptian router catalog model/provider assertions, one-to-one workflow-ID parity across the native fingerprint matrix and prioritized evidence queue, and the invariant that every automatic adapter has a secret-free structural contract fixture.
+- Egyptian router catalog model/provider assertions, one-to-one workflow-ID parity across the native fingerprint matrix and prioritized evidence queue, and the invariant that every automatic adapter has a secret-free structural contract fixture. The July 2026 matrix includes separate TP-Link LTE-router, MiFi, and 5G workflows plus separate D-Link DSL and mobile-router workflows so materially different firmware classes cannot collapse into one generic match.
 
 Pure JVM tests load the same canonical Egyptian fixture matrix, cover multiple real-world page fingerprints for every native router workflow, normalize common Unicode page punctuation, enforce specific-before-generic matching, reject near-match automatic-write false positives, and fail closed for unknown firmware. They also prove that public-page inspection reports only dedicated model/family workflows as recognized; generic vendor and unknown markers remain unrecognized.
 

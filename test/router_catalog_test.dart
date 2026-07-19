@@ -26,7 +26,12 @@ void main() {
         'W8961N',
         'VR300/400/600',
         'MR600',
+        'MR402',
+        'M7005',
+        'NX200',
         'DSL-245GE',
+        'DSL-124',
+        'DWR-933M',
         'Beacon B1.1',
         'NETGEAR',
       ]) {

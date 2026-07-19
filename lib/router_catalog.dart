@@ -105,7 +105,7 @@ const egyptRouterCatalog = <RouterProfile>[
     carrier: 'Egypt retail',
     vendor: 'TP-Link',
     models:
-        'TD-W8961N/W9950/W9960/W9970, Archer VR300/400/600/2100, Deco X20/X50-DSL',
+        'TD-W8961N/W9950/W9960/W9970, Archer VR300/400/600/2100, Archer VX1800v, Deco X20/X50-DSL',
     workflow: 'TP-Link Internet/DHCP DNS and parental-control workflow',
     automation: RouterAutomation.detectOnly,
   ),
@@ -113,16 +113,42 @@ const egyptRouterCatalog = <RouterProfile>[
     workflowId: 'tplink_mobile',
     carrier: 'Egypt retail / e& Egypt business mobile broadband',
     vendor: 'TP-Link',
-    models: 'Archer MR200 / MR400 / MR500 / MR600, TL-MR6400',
+    models: 'Archer MR200 / MR400 / MR402 / MR500 / MR600, TL-MR6400',
     workflow: 'TP-Link LTE Internet/DHCP DNS workflow by hardware version',
+    automation: RouterAutomation.detectOnly,
+  ),
+  RouterProfile(
+    workflowId: 'tplink_mifi',
+    carrier: 'Egypt retail mobile broadband',
+    vendor: 'TP-Link',
+    models: 'M7005 / M7200 mobile Wi-Fi families',
+    workflow: 'TP-Link MiFi LAN/DHCP DNS workflow by hardware version',
+    automation: RouterAutomation.detectOnly,
+  ),
+  RouterProfile(
+    workflowId: 'tplink_5g',
+    carrier: 'Egypt retail / 5G home wireless',
+    vendor: 'TP-Link',
+    models: 'Archer NX200 and Deco X50-5G families',
+    workflow: 'TP-Link 5G CPE/mesh DNS workflow by hardware version',
     automation: RouterAutomation.detectOnly,
   ),
   RouterProfile(
     workflowId: 'dlink_dsl',
     carrier: 'Egypt retail',
     vendor: 'D-Link',
-    models: 'DSL-224, DSL-245GE Egypt firmware, DSL-2877 / DSL-2888 families',
+    models:
+        'DSL-124, DSL-224, DSL-245GE Egypt firmware, DSL-2877 / DSL-2888 / DSL-2888A families',
     workflow: 'D-Link WAN DNS and parental-control workflow',
+    automation: RouterAutomation.detectOnly,
+  ),
+  RouterProfile(
+    workflowId: 'dlink_mobile',
+    carrier: 'Egypt / Middle East retail mobile broadband',
+    vendor: 'D-Link',
+    models:
+        'DWR-910M / DWR-921 / DWR-930M / DWR-933 / DWR-933M / DWR-953 families',
+    workflow: 'D-Link LTE router/MiFi LAN/DHCP DNS workflow by revision',
     automation: RouterAutomation.detectOnly,
   ),
   RouterProfile(

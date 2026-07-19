@@ -19,13 +19,14 @@ This list is ordered by release risk. A lower priority must not displace an unfi
 - [x] Cover fixed DSL/VDSL, fiber ONT, 4G/MiFi, 5G CPE, mesh, and Egyptian retail-router categories.
 - [x] Represent WE, Vodafone, Orange, and e& Egypt provider markets using current provider evidence.
 - [x] Fingerprint Huawei, ZTE, TP-Link, D-Link, Nokia, Tenda, ASUS, NETGEAR, and Technicolor/Thomson families.
+- [x] Refresh July 2026 retail/mobile coverage with TP-Link Egypt MR402, M7005/M7200, VX1800v, NX200/X50-5G and D-Link Egypt/MEA DSL-124/2888A plus DWR mobile families, while keeping every new workflow non-automatic.
 - [x] Keep the Dart compatibility catalog and native detector aligned through one canonical regression fixture matrix with representative fingerprints for every workflow.
 - [x] Add a credential-free, read-only public-login-page compatibility check after gateway detection. It requests Android local-network consent first, sends only the private gateway address to native code, and reports unknown when the page exposes no exact supported marker.
 - [x] Fail closed on unknown models, firmware, page structure, WAN selection, or verification results.
 - [x] Keep automatic writes restricted to the exact Huawei DN8245V-56 adapter already validated and regression-tested.
 - [ ] Investigate the physical DN8245V-56 field result `dns_verification_failed` without weakening read-back. Before retrying automation, manually confirm the WAN DNS state and collect a sanitized firmware/page contract; the observed run stopped before the firewall step and did not claim protection.
 - [x] Let a user forward an allowlisted router failure code to WhatsApp support while excluding the router address, model text, credentials, cookies, page content, and native error text.
-- [ ] Hardware-validation queue: ZTE H188A/H188A V2, Huawei HG8245W5-6T, Huawei B535-932A, ZTE K10/MF971R, Huawei H153, ZTE F670/F680, TP-Link TD-W8961N/VR/MR, and D-Link DSL-245GE. Each item needs a sanitized firmware/page capture and read-back test before automation can be enabled.
+- [ ] Hardware-validation queue: ZTE H188A/H188A V2, Huawei HG8245W5-6T, Huawei B535-932A, ZTE K10/MF971R, Huawei H153, ZTE F670/F680, TP-Link TD-W8961N/VR/VX/MR/MiFi/5G, and D-Link DSL-245GE/2888A/DWR. Each item needs a sanitized firmware/page capture and read-back test before automation can be enabled.
 - [x] Publish a secret-free capture protocol and machine-readable validation queue so new evidence can be regression-tested without collecting router credentials, cookies, addresses, SSIDs, or raw page dumps.
 - [ ] Add newly supplied ISP models only after model/firmware evidence is obtained; provider inventories change and cannot be safely inferred from branding.
 

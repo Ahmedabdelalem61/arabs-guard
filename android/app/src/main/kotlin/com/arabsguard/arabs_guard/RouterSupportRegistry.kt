@@ -63,22 +63,55 @@ internal object RouterSupportRegistry {
                 "Huawei legacy DSL gateway",
                 "huawei_legacy",
             )
-            hasAny(
+            hasModel(
                 value,
-                "archer vr",
+                "archer vr300",
+                "archer vr400",
+                "archer vr600",
+                "archer vr2100",
                 "td-w9950",
                 "td-w9960",
                 "td-w9970",
-                "td-w8961",
+                "td-w8961n",
+                "archer vx1800v",
                 "deco x20-dsl",
                 "deco x50-dsl",
             ) -> RouterMatch("TP-Link DSL gateway family", "tplink_dsl")
-            hasAny(value, "archer mr200", "archer mr400", "archer mr500", "archer mr600", "tl-mr6400") ->
+            hasModel(
+                value,
+                "archer mr200",
+                "archer mr400",
+                "archer mr402",
+                "archer mr500",
+                "archer mr600",
+                "tl-mr6400",
+            ) ->
                 RouterMatch("TP-Link mobile broadband family", "tplink_mobile")
-            hasAny(value, "dsl-224", "dsl-245ge", "dsl-2877", "dsl-2888") -> RouterMatch(
+            hasAny(value, "tp-link", "tplink") && hasModel(value, "m7005", "m7200") ->
+                RouterMatch("TP-Link mobile Wi-Fi family", "tplink_mifi")
+            hasModel(value, "archer nx200", "deco x50-5g") ->
+                RouterMatch("TP-Link 5G CPE / mesh family", "tplink_5g")
+            hasModel(
+                value,
+                "dsl-124",
+                "dsl-224",
+                "dsl-245ge",
+                "dsl-2877",
+                "dsl-2888",
+                "dsl-2888a",
+            ) -> RouterMatch(
                 "D-Link DSL gateway family",
                 "dlink_dsl",
             )
+            hasAny(value, "d-link", "dlink") && hasModel(
+                value,
+                "dwr-910m",
+                "dwr-921",
+                "dwr-930m",
+                "dwr-933",
+                "dwr-933m",
+                "dwr-953",
+            ) -> RouterMatch("D-Link mobile broadband family", "dlink_mobile")
             value.contains("nokia") && hasAny(value, "beacon", "g-240", "g240") -> RouterMatch(
                 "Nokia home gateway / mesh family",
                 "nokia_home",
@@ -110,4 +143,9 @@ internal object RouterSupportRegistry {
 
     private fun hasAny(value: String, vararg needles: String): Boolean =
         needles.any(value::contains)
+
+    private fun hasModel(value: String, vararg models: String): Boolean =
+        models.any { model ->
+            Regex("(?<![a-z0-9])${Regex.escape(model)}(?![a-z0-9])").containsMatchIn(value)
+        }
 }

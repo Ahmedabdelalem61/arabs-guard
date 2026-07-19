@@ -24,10 +24,21 @@ tplink_dsl|false|TP-Link Archer VR600 V3 DSL Modem Router
 tplink_dsl|false|TP-Link TD-W9960 VDSL Gateway
 tplink_dsl|false|TP-Link TD-W8961N V3 300Mbps ADSL2+ Modem Router
 tplink_dsl|false|TP-Link Deco X50-DSL
+tplink_dsl|false|TP-Link Archer VX1800v Wi-Fi 6 VDSL Modem Router
 tplink_mobile|false|TP-Link Archer MR600 4G+ Router
 tplink_mobile|false|TP-Link TL-MR6400 LTE Router
+tplink_mobile|false|TP-Link Archer MR402 AC1200 4G LTE Router
+tplink_mifi|false|TP-Link M7005 4G LTE Mobile Wi-Fi
+tplink_mifi|false|TP-Link M7200 Mobile Wi-Fi
+tplink_5g|false|TP-Link Archer NX200 5G Router
+tplink_5g|false|TP-Link Deco X50-5G Mesh Gateway
 dlink_dsl|false|D-Link DSL-245GE EG_1.00b07
 dlink_dsl|false|D-Link DSL-224 VDSL2 Gateway
+dlink_dsl|false|D-Link DSL-124 R1 Egypt ADSL2+ Router
+dlink_dsl|false|D-Link DSL-2888A EG_1.00b4 VDSL2 Router
+dlink_mobile|false|D-Link DWR-921 4G LTE Router
+dlink_mobile|false|D-Link DWR-930M Mobile Router
+dlink_mobile|false|D-Link DWR-933M CAT6 Mobile Router
 nokia_home|false|Nokia WiFi Beacon B1.1
 nokia_home|false|Nokia G-240W-C Optical Network Terminal
 tenda_dsl|false|Tenda V12 AC1200 VDSL Modem Router

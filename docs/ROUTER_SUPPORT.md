@@ -13,8 +13,8 @@ After gateway detection, the user can start a credential-free, read-only compati
 | WE/Vodafone/Orange/e& Egypt mobile broadband | Huawei B310/B315/B525/B535 (including Orange-documented B535-932A)/B612/B818 and H112/H122/H155 families | Huawei CPE LAN/DHCP DNS workflow | Model-specific guided profile |
 | WE / Orange legacy | ZTE ZXHN H168N and H108N families | ZTE legacy WAN/DHCP DNS workflow by firmware revision | Model-specific guided profile |
 | Egyptian legacy ISP | Huawei DG8045, HG633, HG630, HG531/HG532 families | Huawei legacy WAN/DHCP DNS and URL-filter workflow | Model-specific guided profile |
-| Egyptian retail and e& Egypt business mobile broadband | TP-Link TD-W8961N/W9950/W9960/W9970, Archer VR300/400/600/2100, Deco X20/X50-DSL and Archer/TL-MR mobile families | TP-Link Internet/DHCP DNS and parental-control workflow | Detection/guided fallback |
-| Egyptian retail | D-Link DSL-224, Egypt-firmware DSL-245GE, DSL-2877/2888 families | D-Link WAN DNS and parental-control workflow | Detection/guided fallback |
+| Egyptian retail and e& Egypt business mobile broadband | TP-Link TD-W8961N/W9950/W9960/W9970, Archer VR/VX, Deco DSL, Archer/TL-MR, M7005/M7200, Archer NX200, and Deco X50-5G families | Separate TP-Link DSL, LTE-router, MiFi, and 5G CPE/mesh DNS workflows | Detection/guided fallback; no automatic writes |
+| Egyptian and Middle East retail | D-Link DSL-124/224, Egypt-firmware DSL-245GE/2888A, DSL-2877/2888, and DWR-910M/921/930M/933/933M/953 families | Separate D-Link DSL and LTE-router/MiFi DNS workflows | Detection/guided fallback; no automatic writes |
 | WE mesh / Egyptian fiber | Nokia Beacon B1.1 and G-240 families | Nokia upstream-gateway or ONT DNS workflow | Detection/guided fallback |
 | Egyptian retail/legacy | Tenda V12/D301/D305, ASUS DSL, NETGEAR D6220/D6400/D7000 and Technicolor/Thomson gateways | Vendor-specific WAN or DHCP DNS workflow | Detection/guided fallback |
 
@@ -59,10 +59,22 @@ Provider catalog pages used to establish current Egyptian model families:
 - [TP-Link Egypt modem-router catalog](https://www.tp-link.com/eg/home-networking/all-gateways/)
 - [TP-Link Egypt TD-W8961N product and hardware-revision page](https://www.tp-link.com/eg/home-networking/dsl-modem-router/td-w8961n/)
 - [TP-Link Egypt DSL models and official emulators](https://www.tp-link.com/eg/support/emulator/)
+- [TP-Link Egypt current 5G/4G router catalog](https://www.tp-link.com/eg/home-networking/5g-4g-router/)
+- [TP-Link Egypt M7005 mobile Wi-Fi](https://www.tp-link.com/eg/home-networking/5g-4g-router/m7005/)
+- [TP-Link Egypt Archer VX1800v support](https://www.tp-link.com/eg/support/download/archer-vx1800v/)
+- [TP-Link Egypt Archer NX200 support](https://www.tp-link.com/eg/support/download/archer-nx200/)
+- [TP-Link Egypt Deco X50-5G support](https://www.tp-link.com/eg/support/download/deco-x50-5g/)
 - [D-Link DSL-245GE Egypt-specific firmware and manual](https://www.dlinkmea.com/index.php/product/details?det=K0RsQzFkQldYNnkxQnhUbjN6SkwwQT09)
+- [D-Link DSL-124 Egypt datasheet/firmware](https://www.dlinkmea.com/index.php/product/details?det=dU1iNFc4cWRsdUpjWEpETFlSeFlZdz09)
+- [D-Link DSL-2888A Egypt firmware](https://dlinkmea.com/index.php/product/details?det=cWxRNURjYXZUZVVRUmFZTlI0VVpMdz09)
+- [D-Link DWR-921 regional 4G router](https://www.dlinkmea.com/index.php/product/details?det=dFlJbGx2NXBNczVVY3lUNVZJZDZQdz09)
+- [D-Link DWR-930M regional mobile router](https://www.dlinkmea.com/index.php/product/details?det=OTdjQ1FkczAvWElBbDU3M1RnUFNBQT09)
 - [Orange Egypt Home 4G router interface guidance](https://www.orange.eg/en/help/faq-details?category=35&q=421)
 - [Vodafone Egypt Home Wireless router guidance](https://web.vodafone.com.eg/en/wireless-net)
 - [e& Egypt Office 4G lists Huawei, ZTE, and TP-Link supplied-router families](https://www.etisalat.eg/StaticFiles/portal/etisalat/pages/corporate/home-4g_en.html)
 - [Orange Egypt documentation identifies the Huawei B535-932A Home Wireless router](https://www.orange.eg/ar/Documents/Samsung-Smart-TV-Ramadan-offer-prices-en.pdf)
+- [Vodafone Egypt currently offers 4G/4G+/5G Home Wireless classes](https://web.vodafone.com.eg/ar/widget/wireless-net)
+- [Orange Egypt currently offers Home Wireless 5G](https://www.orange.eg/en/services/5G)
+- [e& Egypt currently offers unnamed 4.5G and 5G eHome Wireless routers](https://www.etisalat.eg/portal/pages/super_connect_home/eHome_Wireless_en.html)
 
-This catalog is not a claim that these are every router ever sold in Egypt. Provider inventory and ISP firmware change, so new adapters require a firmware capture and non-destructive verification before automatic support is enabled.
+The current Vodafone, Orange, and e& pages advertise some router classes without publishing model identifiers. Arabs Guard intentionally leaves those devices unknown unless their local login page exposes an exact catalog marker; speed, provider branding, or “5G router” wording is not enough to select a firmware workflow. This catalog is not a claim that these are every router ever sold in Egypt. Provider inventory and ISP firmware change, so new adapters require a firmware capture and non-destructive verification before automatic support is enabled.

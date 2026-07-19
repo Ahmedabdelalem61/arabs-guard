@@ -17,3 +17,6 @@ P0-15|tenda_dsl|Egyptian retail and legacy DSL|Tenda V12 / D301 / D305|hardware_
 P0-16|asus_dsl|Egyptian retail DSL|ASUS DSL gateways|hardware_capture_required|Exact model and firmware inventory before page capture
 P0-17|netgear_dsl|Egyptian retail DSL|NETGEAR D6220 / D6400 / D7000|hardware_capture_required|Exact firmware WAN DNS and read-back contract
 P0-18|technicolor_gateway|Egyptian legacy fixed broadband|Technicolor / Thomson TG gateways|hardware_capture_required|ISP firmware inventory and non-destructive page contract
+P0-19|tplink_mifi|Egyptian retail mobile broadband|TP-Link M7005 / M7200|hardware_capture_required|Hardware-version MiFi LAN DNS and mobile reconnect contract
+P0-20|tplink_5g|Egyptian retail and 5G home wireless|TP-Link Archer NX200 / Deco X50-5G|hardware_capture_required|Hardware-version 5G DNS controls mesh ownership and reconnect contract
+P0-21|dlink_mobile|Egypt and Middle East retail mobile broadband|D-Link DWR-910M / DWR-921 / DWR-930M / DWR-933 / DWR-933M / DWR-953|hardware_capture_required|Hardware-version LTE LAN DNS and reconnect contract

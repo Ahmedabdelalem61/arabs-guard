@@ -50,6 +50,8 @@ class RouterSupportRegistryTest {
         assertFalse(RouterSupportRegistry.detect("Huawei XDN8245V-56").automatic)
         assertFalse(RouterSupportRegistry.detect("ZTE ZXHN H188A").automatic)
         assertFalse(RouterSupportRegistry.detect("TP-Link Archer VR600").automatic)
+        assertFalse(RouterSupportRegistry.detect("TP-Link M7005").automatic)
+        assertFalse(RouterSupportRegistry.detect("D-Link DWR-921").automatic)
     }
 
     @Test
@@ -61,6 +63,34 @@ class RouterSupportRegistryTest {
         assertEquals(
             "huawei_mobile_cpe",
             RouterSupportRegistry.detect("Huawei B535-932").workflowId,
+        )
+        assertEquals(
+            "tplink_mifi",
+            RouterSupportRegistry.detect("TP-Link M7005(EU) Mobile Wi-Fi").workflowId,
+        )
+        assertEquals(
+            "dlink_mobile",
+            RouterSupportRegistry.detect("D-Link DWR-933M CAT6").workflowId,
+        )
+    }
+
+    @Test
+    fun `new mobile families reject near model matches`() {
+        assertEquals(
+            "tplink_unknown",
+            RouterSupportRegistry.detect("TP-Link M70050 prototype").workflowId,
+        )
+        assertEquals(
+            "dlink_unknown",
+            RouterSupportRegistry.detect("D-Link DWR-9210 prototype").workflowId,
+        )
+        assertEquals(
+            "tplink_unknown",
+            RouterSupportRegistry.detect("TP-Link Archer VX1800v2 prototype").workflowId,
+        )
+        assertEquals(
+            "dlink_unknown",
+            RouterSupportRegistry.detect("D-Link DSL-1240 prototype").workflowId,
         )
     }
 
@@ -102,7 +132,10 @@ class RouterSupportRegistryTest {
             "huawei_legacy",
             "tplink_dsl",
             "tplink_mobile",
+            "tplink_mifi",
+            "tplink_5g",
             "dlink_dsl",
+            "dlink_mobile",
             "nokia_home",
             "tenda_dsl",
             "asus_dsl",
