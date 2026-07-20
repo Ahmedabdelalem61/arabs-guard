@@ -409,9 +409,54 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Egypt router compatibility'), findsOneWidget);
-    expect(find.textContaining('DN8245V-56'), findsOneWidget);
-    expect(find.textContaining('H188A'), findsOneWidget);
-    expect(find.text('Verified automatic'), findsOneWidget);
+    final volunteerCard = find.byKey(
+      const Key('router-validation-volunteer-card'),
+    );
+    await tester.scrollUntilVisible(
+      volunteerCard,
+      220,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(volunteerCard, findsOneWidget);
+    expect(find.text('ساعدنا في اعتماد راوتر جديد'), findsOneWidget);
+    expect(find.text('Open safe checklist'), findsOneWidget);
+
+    final verifiedWorkflow = find.byKey(
+      const Key('router-profile-huawei_dn8245v56'),
+    );
+    await tester.scrollUntilVisible(
+      verifiedWorkflow,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(
+      find.descendant(
+        of: verifiedWorkflow,
+        matching: find.textContaining('DN8245V-56'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: verifiedWorkflow,
+        matching: find.text('Verified automatic'),
+      ),
+      findsOneWidget,
+    );
+
+    final h188aWorkflow = find.byKey(const Key('router-profile-zte_h188a'));
+    await tester.scrollUntilVisible(
+      h188aWorkflow,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(
+      find.descendant(
+        of: h188aWorkflow,
+        matching: find.textContaining('H188A'),
+      ),
+      findsOneWidget,
+    );
 
     final lastWorkflow = find.byKey(
       const Key('router-profile-technicolor_gateway'),
@@ -425,6 +470,39 @@ void main() {
     expect(find.textContaining('Technicolor / Thomson'), findsOneWidget);
     expect(find.text('Detection only'), findsWidgets);
   });
+
+  testWidgets(
+    'router validation card remains usable on compact large-text devices',
+    (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(320, 568);
+      tester.view.devicePixelRatio = 1;
+      tester.platformDispatcher.textScaleFactorTestValue = 1.8;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+        tester.platformDispatcher.clearTextScaleFactorTestValue();
+      });
+
+      await tester.pumpWidget(const ArabsGuardApp());
+      await tester.pumpAndSettle();
+      final catalog = find.byKey(const Key('egypt-router-catalog'));
+      await _tapVisible(tester, catalog);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Egypt router compatibility'), findsOneWidget);
+      final volunteerCard = find.byKey(
+        const Key('router-validation-volunteer-card'),
+      );
+      await tester.scrollUntilVisible(
+        volunteerCard,
+        180,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(volunteerCard, findsOneWidget);
+      expect(find.text('Open safe checklist'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('opens transparent Arabic-world coming-soon roadmap', (
     WidgetTester tester,
@@ -442,8 +520,26 @@ void main() {
 
     expect(find.text('Arabic-world roadmap'), findsOneWidget);
     expect(find.text('مصر هي نقطة البداية'), findsOneWidget);
+
+    final volunteerCard = find.byKey(
+      const Key('router-validation-volunteer-card'),
+    );
+    await tester.scrollUntilVisible(
+      volunteerCard,
+      220,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(volunteerCard, findsOneWidget);
+    expect(find.text('Open safe checklist'), findsOneWidget);
+
+    final saudiArabia = find.text('Saudi Arabia');
+    await tester.scrollUntilVisible(
+      saudiArabia,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
     expect(find.text('السعودية'), findsOneWidget);
-    expect(find.text('Saudi Arabia'), findsOneWidget);
+    expect(saudiArabia, findsOneWidget);
     expect(find.text('SOON'), findsWidgets);
   });
 

@@ -1082,6 +1082,8 @@ class RouterCatalogPage extends StatelessWidget {
           style: TextStyle(height: 1.45),
         ),
         const SizedBox(height: 18),
+        const _RouterValidationVolunteerCard(),
+        const SizedBox(height: 18),
         for (final profile in egyptRouterCatalog) ...[
           Card(
             key: Key('router-profile-${profile.workflowId}'),
@@ -1144,6 +1146,133 @@ class RouterCatalogPage extends StatelessWidget {
             color: Color(0xFF697487),
             height: 1.45,
           ),
+        ),
+      ],
+    ),
+  );
+}
+
+class _RouterValidationVolunteerCard extends StatelessWidget {
+  const _RouterValidationVolunteerCard();
+
+  Future<void> _openChecklist(BuildContext context) async {
+    if (!await launchUrl(
+      routerValidationVolunteerUri(),
+      mode: LaunchMode.externalApplication,
+    )) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not open WhatsApp.')),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => Container(
+    key: const Key('router-validation-volunteer-card'),
+    padding: const EdgeInsets.all(20),
+    decoration: BoxDecoration(
+      gradient: const LinearGradient(
+        colors: <Color>[_navy, Color(0xFF0B4050)],
+        begin: AlignmentDirectional.topStart,
+        end: AlignmentDirectional.bottomEnd,
+      ),
+      borderRadius: BorderRadius.circular(24),
+      boxShadow: const <BoxShadow>[
+        BoxShadow(
+          color: Color(0x2206162F),
+          blurRadius: 22,
+          offset: Offset(0, 10),
+        ),
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0x2615B7A5),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Icon(
+                Icons.volunteer_activism_rounded,
+                color: Color(0xFF74E5D8),
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Help validate your router',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  SizedBox(height: 3),
+                  Text(
+                    'ساعدنا في اعتماد راوتر جديد',
+                    textDirection: TextDirection.rtl,
+                    style: TextStyle(
+                      color: Color(0xFFBDEDE7),
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 14),
+        const Text(
+          'Own an Egyptian or Arab-market router? Open a fixed checklist and volunteer only provider, printed model, hardware revision, and sanitized firmware family.',
+          style: TextStyle(color: Color(0xFFE8F1F4), height: 1.45),
+        ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: const Color(0x18FFFFFF),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0x22FFFFFF)),
+          ),
+          child: const Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(Icons.privacy_tip_outlined, color: Color(0xFFF3C969)),
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'No router address, credentials, serial, SSID, screenshot, page content, or automatic device data. Arabs Guard stores nothing from this checklist.',
+                  style: TextStyle(
+                    color: Color(0xFFF5F7FA),
+                    fontSize: 12,
+                    height: 1.4,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 14),
+        FilledButton.icon(
+          key: const Key('router-validation-volunteer'),
+          onPressed: () => _openChecklist(context),
+          style: FilledButton.styleFrom(
+            backgroundColor: Colors.white,
+            foregroundColor: _navy,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          ),
+          icon: const Icon(Icons.chat_rounded),
+          label: const Text('Open safe checklist'),
         ),
       ],
     ),
@@ -1231,6 +1360,8 @@ class RegionRoadmapPage extends StatelessWidget {
             ],
           ),
         ),
+        const SizedBox(height: 18),
+        const _RouterValidationVolunteerCard(),
         const SizedBox(height: 18),
         for (final region in arabicRegionRoadmap) ...[
           Card(

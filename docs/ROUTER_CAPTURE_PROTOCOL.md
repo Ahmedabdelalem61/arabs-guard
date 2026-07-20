@@ -12,6 +12,8 @@ Never submit:
 - Public or private IP addresses, MAC addresses, serial numbers, SSIDs, phone numbers, subscriber identifiers, configuration backups, packet captures, or raw HTML/JavaScript dumps.
 - Screenshots containing account, network, device, or household information.
 
+The app's **Help validate your router** card opens a fixed WhatsApp checklist containing no automatically collected router, phone, or network fields. It is an invitation to begin this protocol, not permission to send raw evidence. The volunteer must review the message, type only the five allowed non-unique fields, and wait for guided steps before observing router pages.
+
 ## Evidence stages
 
 1. Record only provider, printed model, hardware revision, and firmware family after removing unique identifiers.

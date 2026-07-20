@@ -13,6 +13,7 @@ Arabs Guard is a consent-driven Android app for family-safe DNS protection on a 
 - Modern bilingual Arabic-world expansion roadmap covering all 22 Arab League countries without presenting unvalidated markets as supported.
 - Unsupported or changed firmware fails closed: the app does not guess admin requests.
 - WhatsApp support from the app without contact, SMS, phone, storage, or location permission. Router failures can prefill an allowlisted diagnostic code while excluding credentials, router addresses, cookies, page content, and raw error text.
+- A bilingual router-validation volunteer card opens a fixed, reviewable WhatsApp checklist without attaching detected router, phone, or network data and without adding a local database.
 - `DEMO_MODE` for recordings and UI testing without changing a router or starting a VPN.
 
 ## Important boundaries
@@ -80,8 +81,8 @@ Future structured local data is intentionally the last priority. The privacy and
 
 Local demo APKs use the Flutter template's debug signing key. Before Play publishing, create and protect a production upload keystore, configure release signing outside Git, build an Android App Bundle, complete the Google Play `VpnService` declaration, and provide the required VPN review video and prominent-disclosure evidence.
 
-The current Android 17 evaluation build is published as the [v1.0.0-alpha.10 prerelease](https://github.com/Ahmedabdelalem61/arabs-guard/releases/tag/v1.0.0-alpha.10).
+The current Android 17 evaluation build is published as the [v1.0.0-alpha.11 prerelease](https://github.com/Ahmedabdelalem61/arabs-guard/releases/tag/v1.0.0-alpha.11).
 
 ## Support
 
-Use the headset icon in the app to open WhatsApp support.
+Use the headset icon in the app to open WhatsApp support. The Egyptian compatibility catalog also offers a secret-free hardware-validation checklist for router owners who want to help expand verified coverage.

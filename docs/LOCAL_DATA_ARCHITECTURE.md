@@ -2,6 +2,8 @@
 
 Arabs Guard currently needs no database: protection status comes from Android, router credentials are intentionally ephemeral, and the router catalog ships as reviewed application data. Adding storage now would create privacy and migration risk without a user benefit.
 
+The router-validation volunteer checklist also requires no persistence: it is a fixed external URI containing no automatically gathered router, phone, or network values. Any future contribution-tracking feature must pass the same database gate below instead of silently turning this checklist into local telemetry.
+
 When a later feature genuinely needs durable structured state, use a local SQLite-backed repository behind a Dart interface so UI and protection code do not depend directly on a database package. Prefer a maintained Flutter SQLite abstraction with generated, versioned migrations. The selection must be reviewed again at implementation time rather than pinning an unused dependency today.
 
 ## Allowed future data
@@ -26,4 +28,3 @@ When a later feature genuinely needs durable structured state, use a local SQLit
 4. For every later schema version, test migration from every supported historical version with retained-data assertions.
 5. Run Android-dependent database tests across every supported API in the hosted matrix.
 6. Provide a user-visible erase-local-data action and verify uninstall removes all app data.
-

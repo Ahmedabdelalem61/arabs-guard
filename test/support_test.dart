@@ -40,6 +40,34 @@ void main() {
     expect(text, isNot(contains('fixture-secret')));
     expect(text, isNot(contains('password=')));
   });
+
+  test(
+    'router validation volunteer URI contains only a fixed safe checklist',
+    () {
+      final uri = routerValidationVolunteerUri();
+      final text = uri.queryParameters['text'].orEmpty;
+      final addressPattern = RegExp(r'\b(?:\d{1,3}\.){3}\d{1,3}\b');
+      final macPattern = RegExp(r'\b(?:[0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}\b');
+
+      expect(uri.scheme, 'https');
+      expect(uri.host, 'wa.me');
+      expect(uri.path, '/2001011459031');
+      expect(uri.queryParameters.keys, <String>{'text'});
+      expect(uri.fragment, isEmpty);
+      expect(uri.toString().length, lessThan(2000));
+      expect(text, contains('Country / البلد: [type manually]'));
+      expect(text, contains('Printed router model / موديل الراوتر'));
+      expect(text, contains('Never send router addresses'));
+      expect(text, contains('attached no router, phone, or network data'));
+      expect(text, contains('stored nothing'));
+      expect(addressPattern.hasMatch(text), isFalse);
+      expect(macPattern.hasMatch(text), isFalse);
+      expect(text, isNot(contains('password=')));
+      expect(text, isNot(contains('ssid=')));
+      expect(text, isNot(contains('cookie=')));
+      expect(text, isNot(contains('token=')));
+    },
+  );
 }
 
 extension on String? {

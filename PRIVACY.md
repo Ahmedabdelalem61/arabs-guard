@@ -1,6 +1,6 @@
 # Privacy Policy — Arabs Guard
 
-Last updated: 19 July 2026
+Last updated: 20 July 2026
 
 Arabs Guard is designed to provide family-safe DNS filtering without collecting personal data.
 
@@ -24,7 +24,9 @@ CleanBrowsing operates the upstream Family Filter and applies its own service te
 
 ## WhatsApp support
 
-Choosing support opens an external `wa.me` link. From a router failure dialog, the prefilled message contains only an allowlisted diagnostic code; it deliberately excludes the router address, model text, username, password, cookies, page content, and native error text. The user can review or edit the message before sending it. WhatsApp and the device browser then operate under their own privacy policies. Arabs Guard does not read the user's contacts or WhatsApp data.
+Choosing support opens an external `wa.me` link. From a router failure dialog, the prefilled message contains only an allowlisted diagnostic code; it deliberately excludes the router address, model text, username, password, cookies, page content, and native error text.
+
+The optional router-validation volunteer action opens a separate fixed checklist. The app supplies no detected model, gateway, credentials, firmware text, device identifier, or network data and stores no checklist response. The template asks the user to type only country, provider, printed model, non-unique hardware revision, and a sanitized firmware family, and prominently warns against sending addresses, credentials, SSIDs, serial/MAC/subscriber identifiers, cookies/tokens, screenshots, backups, page source, or packet captures. The user can review or edit either message before sending it. WhatsApp and the device browser then operate under their own privacy policies. Arabs Guard does not read the user's contacts or WhatsApp data.
 
 ## Security
 
